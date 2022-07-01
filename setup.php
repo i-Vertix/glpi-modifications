@@ -61,7 +61,7 @@ function plugin_version_mod()
 
     return array('name' => __('GLPI Modifications'),
         'version' => PLUGIN_GLPI_MODIFICATIONS_VERSION,
-        'author' => '<a href="https://www.pgum.eu/">PGUM s.r.l.</a>, <a href="https://github.com/i-Vertix/glpi-modifications">i-Vertix NMS</a>, <a href="https://github.com/stdonato/glpi-modifications">Steven Donato</a>',
+        'author' => '<a href="https://www.pgum.eu/">PGUM s.r.l.</a>',
         'license' => 'GPLv2+',
         'homepage' => 'https://github.com/i-Vertix/glpi-modifications',
         'minGlpiVersion' => PLUGIN_GLPI_MODIFICATIONS_GLPI_MIN_VERSION,
