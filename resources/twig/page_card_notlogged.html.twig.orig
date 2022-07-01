@@ -49,7 +49,7 @@
 {# --- PLUGIN CUSTOM CSS FOR BACKGROUND --- #}
 <style>
     .plugin-mod-welcome {
-        background: url(https://helpdesk.i-vertix.cloud/pics/bg/back.jpg) no-repeat fixed center;
+        background: url(./plugins/mod/resources/background.jpg) no-repeat fixed top;
         background-size: cover;
     }
 </style>

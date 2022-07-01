@@ -33,11 +33,6 @@ along with glpi-modifications. If not, see <http://www.gnu.org/licenses/>.
 
 function plugin_mod_install()
 {
-    include_once(GLPI_ROOT . '/plugins/mod/inc/filemanager.php');
-    createLoginPageBackup();
-    createHeadBackup();
-    createLogoBackup();
-    createFaviconBackup();
     return true;
 }
 
