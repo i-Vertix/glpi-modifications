@@ -51,12 +51,7 @@ if ($plugin->isActivated("mod")) {
     $logosOverwritten = isLogoBackupPresent();
 
     if (isset($_POST['update'])) {
-        file_put_contents("/var/log/test1.log", isset($_FILES) . "\n" . serialize($_FILES) . "\n");
-
-//        if (count($_FILES) > 0) file_put_contents("/var/log/test.log", serialize($_FILES) . "\n");
-
         if (isset($_FILES['background']['name']) && $_FILES['background']['name'] !== '') {
-            file_put_contents("/var/log/test1.log", file_get_contents("/var/log/test1.log") . "init upload\n");
             uploadImage($_FILES['background'], ["jpg", "jpeg"], 'background.jpg');
         }
 

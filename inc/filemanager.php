@@ -254,14 +254,12 @@ function overwriteFavicon(): bool
 function uploadImage(array $file, array $filetype, string $relativeOutput): bool
 {
     if (isset($file["error"]) && $file["error"] !== 0) {
-        file_put_contents("/var/log/test.log", "return error bye");
         return false;
     }
 
     $extension = pathinfo($file["name"], PATHINFO_EXTENSION);
     if (!in_array($extension, $filetype, true)) return false;
     $output = GLPI_MOD_RESOURCE_DIR . '/' . $relativeOutput;
-    file_put_contents("/var/log/test.log", $output);
     return move_uploaded_file($file["tmp_name"], $output);
 }
 
