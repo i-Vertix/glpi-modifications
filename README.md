@@ -15,7 +15,25 @@ This plugin and it's maintainers are not connected to the GLPI project in any wa
 ## INSTALLATION
 Download plugin archive from https://github.com/i-Vertix/glpi-modifications/releases for the required GLPI version and unzip the archive to the glpi plugins folder.
 After unzipping a new folder called "mod" should appear in your plugins folder. If not, make sure the unzipped folder is located in the glpi plugins folder (glpi/plugins) and is renamed to "mod".
-Now log in to glpi and install the GLPI Modifications plugin.
+### :warning: Permissions :warning:
+Please make sure the apache user has write access over the "mod" plugin directory and several files located in the GLPI folder (list below).
+This is needed because the plugin creates folders and files for backup and customization purposes.
+
+List of GLPI files where write access is needed:
+* /templates/layout/page_card_notlogged.html.twig
+* /templates/layout/parts/head.html.twig
+* /pics/logos/logo-G-100-black.png
+* /pics/logos/logo-G-100-grey.png
+* /pics/logos/logo-G-100-white.png
+* /pics/logos/logo-GLPI-100-black.png
+* /pics/logos/logo-GLPI-100-grey.png
+* /pics/logos/logo-GLPI-100-white.png
+* /pics/logos/logo-GLPI-250-black.png
+* /pics/logos/logo-GLPI-250-grey.png
+* /pics/logos/logo-GLPI-250-white.png
+* /pics/favicon.ico
+
+If the above steps are completed and permissions are granted, log in to your GLPI dashboard and install the GLPI Modifications plugin.
 
 ## USAGE
 To modify the login background image and icons head over to the plugin settings in the glpi plugin manager. From there you can upload your resources. Please make sure to respect the required image resolutions to ensure proper visualization.
