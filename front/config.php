@@ -33,11 +33,13 @@ along with glpi-modifications. If not, see <http://www.gnu.org/licenses/>.
 
 include("../../../inc/includes.php");
 include("../../../inc/config.php");
-include("filemanager.php");
+include("../inc/filemanager.php");
 
 if (!defined("GLPI_MOD_DIR")) {
     define("GLPI_MOD_DIR", GLPI_ROOT . "/plugins/mod");
 }
+
+Session::checkRight("config", UPDATE);
 
 Html::header('UI Modification', $_SERVER["PHP_SELF"],
     "admin", "plugins", "mod");

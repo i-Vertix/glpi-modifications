@@ -35,18 +35,26 @@ if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
 }
 
-Session::checkLoginUser();
+Session::checkRight("config", UPDATE);
 
 if (!defined("GLPI_MOD_DIR")) {
     define("GLPI_MOD_DIR", GLPI_ROOT . "/plugins/mod");
 }
 
+if (!defined("GLPI_MOD_FILES_DIR")) {
+    define("GLPI_MOD_FILES_DIR", GLPI_ROOT . "/files/_plugins/mod");
+}
+
 if (!defined("GLPI_MOD_BACKUP_DIR")) {
-    define("GLPI_MOD_BACKUP_DIR", GLPI_ROOT . "/plugins/mod/backups");
+    define("GLPI_MOD_BACKUP_DIR", GLPI_MOD_FILES_DIR . "/backups");
 }
 
 if (!defined("GLPI_MOD_RESOURCE_DIR")) {
     define("GLPI_MOD_RESOURCE_DIR", GLPI_ROOT . "/plugins/mod/resources");
+}
+
+if (!is_dir(GLPI_MOD_FILES_DIR) && !mkdir($concurrentDirectory = GLPI_MOD_FILES_DIR) && !is_dir($concurrentDirectory)) {
+    die('Files folder not created');
 }
 
 if (!is_dir(GLPI_MOD_BACKUP_DIR) && !mkdir($concurrentDirectory = GLPI_MOD_BACKUP_DIR) && !is_dir($concurrentDirectory)) {
@@ -54,11 +62,11 @@ if (!is_dir(GLPI_MOD_BACKUP_DIR) && !mkdir($concurrentDirectory = GLPI_MOD_BACKU
 }
 
 if (!is_dir(GLPI_MOD_BACKUP_DIR . '/twig') && !mkdir($concurrentDirectory = GLPI_MOD_BACKUP_DIR . '/twig') && !is_dir($concurrentDirectory)) {
-    die('Backup folder not created');
+    die('Twig backup folder not created');
 }
 
 if (!is_dir(GLPI_MOD_BACKUP_DIR . '/logos/') && !mkdir($concurrentDirectory = GLPI_MOD_BACKUP_DIR . '/logos/') && !is_dir($concurrentDirectory)) {
-    die('Backup folder not created');
+    die('Logos backup folder not created');
 }
 
 function isLoginPageBackupPresent(): bool
@@ -262,22 +270,3 @@ function uploadImage(array $file, array $filetype, string $relativeOutput): bool
     $output = GLPI_MOD_RESOURCE_DIR . '/' . $relativeOutput;
     return move_uploaded_file($file["tmp_name"], $output);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

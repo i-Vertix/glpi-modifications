@@ -51,7 +51,7 @@ function plugin_init_mod()
             'addtabon' => ['Config']
         ]);
 
-        $PLUGIN_HOOKS['config_page']['mod'] = './inc/config.php';
+        $PLUGIN_HOOKS['config_page']['mod'] = './front/config.php';
     }
 }
 
