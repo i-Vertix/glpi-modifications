@@ -31,7 +31,7 @@ along with glpi-modifications. If not, see <http://www.gnu.org/licenses/>.
 --------------------------------------------------------------------------
 */
 
-const PLUGIN_GLPI_MODIFICATIONS_VERSION = "10.0.1";
+const PLUGIN_GLPI_MODIFICATIONS_VERSION = "10.0.2";
 
 // Minimal GLPI version, included
 const PLUGIN_GLPI_MODIFICATIONS_GLPI_MIN_VERSION = "10.0";
