@@ -28,49 +28,26 @@
  * -------------------------------------------------------------------------
  */
 
-use GlpiPlugin\Mod\BrandManager;
+use GlpiPlugin\Mod\UIBranding;
 
-/**
- * Plugin install process
- *
- * @return boolean
- */
-function plugin_mod_install()
-{
-    $brandManager = new BrandManager();
-    $brandManager->install();
-    return true;
-}
+Session::checkRight("config", UPDATE);
 
-/**
- * Plugin uninstall process
- *
- * @return boolean
- */
-function plugin_mod_uninstall()
-{
-    $brandManager = new BrandManager();
-//    $brandManager->changeTitle("i-Vertix");
-    $brandManager->uninstall();
-    return true;
-}
+if (Plugin::isPluginActive("mod")) {
+    $uiBranding = new UIBranding();
 
-function plugin_mod_activate()
-{
-    $brandManager = new BrandManager();
-    $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
-        $brandManager->applyResource($resourceName);
+    Session::checkRight("config", UPDATE);
+
+    if (isset($_POST["update"])) {
+        $uiBranding->save($_POST, $_FILES);
+        Html::back();
+    } else {
+        Html::header("UI Branding", '', "config", "plugin", "mod");
+        $uiBranding->display();
+        Html::footer();
     }
-    $brandManager->applyLoginPageModifier();
-}
-
-function plugin_mod_deactivate()
-{
-    $brandManager = new BrandManager();
-//    $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
-        $brandManager->restoreResource($resourceName);
-    }
-    $brandManager->disableLoginPageModifier();
+} else {
+    Html::header(__('Setup'), '', "config", "plugin");
+    echo "<div class='alert alert-important alert-warning d-flex'>";
+    echo "<b>" . __('Please activate the plugin', 'mod') . "</b></div>";
+    Html::footer();
 }

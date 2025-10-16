@@ -1,0 +1,82 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-16 09:18+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: templates/uibranding.html.twig
+msgid "UI Branding"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Apply Modifications"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Page Title"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Show Login background"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Custom Images"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Background (min. 1920x1080 - JPG)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Background"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Small Logo"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Large Logo"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Favicon (16x16 - ICO)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Favicon"
+msgstr ""
+
+#: front/uibranding.php:51
+msgid "Please activate the plugin"
+msgstr ""

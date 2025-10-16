@@ -1,1 +1,6 @@
+dist/
+node_modules/
+tests/files/_logs/*.log
+vendor/
+.gh_token
 .idea/

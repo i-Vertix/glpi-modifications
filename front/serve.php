@@ -30,47 +30,36 @@
 
 use GlpiPlugin\Mod\BrandManager;
 
-/**
- * Plugin install process
- *
- * @return boolean
- */
-function plugin_mod_install()
-{
-    $brandManager = new BrandManager();
-    $brandManager->install();
-    return true;
+$key = $_GET['resource'] ?? '';
+if ($key === "" || !isset(BrandManager::IMAGE_RESOURCES[$key])) {
+    http_response_code(404);
+    exit("Unknown resource");
 }
 
-/**
- * Plugin uninstall process
- *
- * @return boolean
- */
-function plugin_mod_uninstall()
-{
-    $brandManager = new BrandManager();
-//    $brandManager->changeTitle("i-Vertix");
-    $brandManager->uninstall();
-    return true;
+$file = BrandManager::IMAGE_RESOURCES[$key]["current"];
+if (!file_exists($file)) {
+    http_response_code(404);
+    exit("Image not found");
 }
 
-function plugin_mod_activate()
-{
-    $brandManager = new BrandManager();
-    $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
-        $brandManager->applyResource($resourceName);
-    }
-    $brandManager->applyLoginPageModifier();
+$mime = false;
+if (function_exists('mime_content_type')) {
+    $mime = @mime_content_type($file);
 }
+if ($mime === false) {
+    // Fallback
+    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    $mimeMap = [
+        'jpg' => 'image/jpeg',
+        'png' => 'image/png',
+        'ico'  => 'image/x-icon',
+    ];
+    $mime = $mimeMap[$ext] ?? 'application/octet-stream';
+}
+header('Content-Type: ' . $mime);
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
 
-function plugin_mod_deactivate()
-{
-    $brandManager = new BrandManager();
-//    $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
-        $brandManager->restoreResource($resourceName);
-    }
-    $brandManager->disableLoginPageModifier();
-}
+readfile($file);
+exit;
