@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-16 09:18+0200\n"
-"PO-Revision-Date: 2025-10-16 09:22+0200\n"
+"POT-Creation-Date: 2025-10-16 23:53+0200\n"
+"PO-Revision-Date: 2025-10-16 23:54+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -31,8 +31,16 @@ msgid "Page Title"
 msgstr "Titolo Pagina"
 
 #: templates/uibranding.html.twig
-msgid "Show Login background"
+msgid "Show login background"
 msgstr "Mostra lo sfondo del login"
+
+#: templates/uibranding.html.twig
+msgid "Show custom logos"
+msgstr "Mostra loghi personalizzati"
+
+#: templates/uibranding.html.twig
+msgid "Show custom favicon"
+msgstr "Mostra la favicon personalizzata"
 
 #: templates/uibranding.html.twig
 msgid "Custom Images"
