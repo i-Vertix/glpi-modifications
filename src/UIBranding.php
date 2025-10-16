@@ -30,9 +30,7 @@
 
 namespace GlpiPlugin\Mod;
 
-use Dropdown;
 use Glpi\Application\View\TemplateRenderer;
-use Html;
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -54,25 +52,20 @@ class UIBranding
         $faviconChanged = false;
 
         if (isset($files['background']['name']) && $files['background']['name'] !== '') {
-            $brandManager->uploadResource("background", $files['background']);
-            $backgroundChanged = true;
+            $backgroundChanged = $brandManager->uploadResource("background", $files['background']);
         }
         if (isset($files['logo_s']['name']) && $files['logo_s']['name'] !== '') {
-            $brandManager->uploadResource("logo_s", $files['logo_s']);
-            $logosChanged = true;
+            $logosChanged = $brandManager->uploadResource("logo_s", $files['logo_s']);
         }
         if (isset($files['logo_m']['name']) && $files['logo_m']['name'] !== '') {
-            $brandManager->uploadResource("logo_m", $files['logo_m']);
-            $logosChanged = true;
+            $logosChanged = $brandManager->uploadResource("logo_m", $files['logo_m']);
         }
         if (isset($files['logo_l']['name']) && $files['logo_l']['name'] !== '') {
-            $brandManager->uploadResource("logo_l", $files['logo_l']);
-            $logosChanged = true;
+            $logosChanged = $brandManager->uploadResource("logo_l", $files['logo_l']);
         }
 
         if (isset($files['favicon']['name']) && $files['favicon']['name'] !== '') {
-            $brandManager->uploadResource("favicon", $files['favicon']);
-            $faviconChanged = true;
+            $faviconChanged = $brandManager->uploadResource("favicon", $files['favicon']);
         }
 
         if (isset($data['show_background'])) {
@@ -142,11 +135,11 @@ class UIBranding
     public function display(): bool
     {
         TemplateRenderer::getInstance()->display('@mod/uibranding.html.twig', [
-            "url" => "/plugin/mod/front/uibranding.php",
+            "url" => "/plugins/mod/front/uibranding.php",
             "show_background" => BrandManager::isLoginPageModified(),
             "show_custom_logos" => BrandManager::isActiveResourceModified("logo_s")
-            || BrandManager::isActiveResourceModified("logo_m")
-            || BrandManager::isActiveResourceModified("logo_l"),
+                || BrandManager::isActiveResourceModified("logo_m")
+                || BrandManager::isActiveResourceModified("logo_l"),
             "show_custom_favicon" => BrandManager::isActiveResourceModified("favicon"),
             "title" => BrandManager::getCurrentTitle(),
         ]);

@@ -28,38 +28,31 @@
  * -------------------------------------------------------------------------
  */
 
-use GlpiPlugin\Mod\BrandManager;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-$key = $_GET['resource'] ?? '';
-if ($key === "" || !isset(BrandManager::IMAGE_RESOURCES[$key])) {
-    http_response_code(404);
-    exit("Unknown resource");
-}
+$file = GLPI_PLUGIN_DOC_DIR . "/mod/images/background.jpg";
 
-$file = BrandManager::IMAGE_RESOURCES[$key]["current"];
 if (!file_exists($file)) {
-    http_response_code(404);
-    exit("Image not found");
+    return new Response('Image not found', 404);
 }
 
-$mime = false;
-if (function_exists('mime_content_type')) {
-    $mime = @mime_content_type($file);
+// remove existing conflicting headers
+if (!headers_sent()) {
+    header_remove('Pragma');
+    header_remove('Expires');
+    header_remove('Cache-Control');
 }
-if ($mime === false) {
-    // Fallback
-    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-    $mimeMap = [
-        'jpg' => 'image/jpeg',
-        'png' => 'image/png',
-        'ico'  => 'image/x-icon',
-    ];
-    $mime = $mimeMap[$ext] ?? 'application/octet-stream';
-}
-header('Content-Type: ' . $mime);
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
 
-readfile($file);
-exit;
+$response = new BinaryFileResponse($file);
+$response->setPublic();
+$response->setMaxAge(31536000);
+$response->setSharedMaxAge(31536000);
+$response->mustRevalidate();
+$response->setEtag(md5_file($file));
+$response->setAutoLastModified();
+$response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE);
+$response->isNotModified(Request::createFromGlobals());
+return $response;

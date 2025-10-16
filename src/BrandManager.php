@@ -40,16 +40,35 @@ if (!defined('GLPI_ROOT')) {
 class BrandManager
 {
 
-    public const FILES_DIR = GLPI_ROOT . "/files/_plugins/mod";
+    public const FILES_DIR = GLPI_PLUGIN_DOC_DIR . "/mod";
     public const BACKUP_DIR = self::FILES_DIR . "/backups";
     public const IMAGES_DIR = self::FILES_DIR . "/images";
     public const RESOURCES_DIR = GLPI_ROOT . "/plugins/mod/resources";
-    private const PUBLIC_PICS_PLUGIN_DIR = GLPI_ROOT . "/public/pics/plugin_mod";
     public const IMAGE_RESOURCES = [
+        /*
+         * Something special about background.jpg:
+         * (OBSOLETE - FOUND SOLUTION BELOW)
+         * I tried to figure out several ways to not have to copy this beast into the public pics folder
+         * but everything I tried did not work out due to the strict routing limitations of GLPI 11.
+         * In GLPI 11 every php page load goes through the GLPI index/router and dismisses the request if not logged in
+         * This makes a cache-optimized wrapper php script obsolete. It would have provided the .jpg from the webserver restricted files/_plugins directory.
+         * There is also available a hook to integrate the plugin into the login page itself (Hooks::DISPLAY_LOGIN) but I did not want to
+         * base64 encode the background image due to performance concerns (no browser caching of the (large) background image).
+         * Other than that there is nothing I can actually do. Its not the best option to replace/delete from the glpi/public/pics folder, but here we are...
+         * glpi/plugins/mod/public could also work out but as glpi does absolutely not want plugins to write in their own directory I keep the glpi/public/pics directory for now
+         *
+         * (UPDATE - CURRENT SOLUTION)
+         * After having a hard time believing there is no such thing as "public" scripts (not logged in) I stumbled upon the GLPI Firewall and the possibility
+         * to add no_check (no login) strategies for plugin url patterns!
+         * Currently this is implemented in the plugin_init_mod function inside setup.php.
+         * I hope this little trick will also be available in future versions lol
+         * otherwise I need to roll back to my previous solutions :(
+         *
+         */
         "background" => [
             "default" => self::RESOURCES_DIR . "/images/background.jpg",
             "current" => self::IMAGES_DIR . "/background.jpg",
-            "active" => self::PUBLIC_PICS_PLUGIN_DIR . "/background.jpg",
+//            "active" => GLPI_ROOT . "/public/pics/plugin_mod_background.jpg",
             "accept" => ["jpeg", "jpg"]
         ],
         "favicon" => [
@@ -135,9 +154,6 @@ class BrandManager
         if (!file_exists(self::IMAGES_DIR) && !mkdir(self::IMAGES_DIR, 0644) && !is_dir(self::IMAGES_DIR)) {
             die(sprintf('Unable to create plugin directory (%s)', self::IMAGES_DIR));
         }
-        if (!file_exists(self::PUBLIC_PICS_PLUGIN_DIR) && !mkdir(self::PUBLIC_PICS_PLUGIN_DIR, 0644) && !is_dir(self::PUBLIC_PICS_PLUGIN_DIR)) {
-            die(sprintf('Unable to create public plugin directory (%s)', self::PUBLIC_PICS_PLUGIN_DIR));
-        }
         Session::addMessageAfterRedirect("🆗 Created plugin directories");
 
         // handle default images
@@ -146,7 +162,7 @@ class BrandManager
                 die("Unable to install $imageResource resource");
             }
             // create backup
-            if (isset($paths["backup"])) {
+            if (isset($paths["backup"], $paths["active"])) {
                 if (is_array($paths["backup"])) {
                     foreach ($paths["backup"] as $backupIndex => $backupPath) {
                         if (!file_exists($backupPath) && !copy($paths["active"][$backupIndex], $backupPath)) {
@@ -211,7 +227,7 @@ class BrandManager
      */
     public static function isActiveResourceModified(string $resourceName): bool
     {
-        if (!isset(self::IMAGE_RESOURCES[$resourceName]["active"])) return false;
+        if (!isset(self::IMAGE_RESOURCES[$resourceName]["active"], self::IMAGE_RESOURCES[$resourceName]["backup"])) return false;
 
         if (isset(self::IMAGE_RESOURCES[$resourceName]["backup"])) {
             // backups are made - check md5 hash of files
@@ -248,7 +264,7 @@ class BrandManager
      */
     public function restoreResource(string $resourceName): void
     {
-        if (!isset(self::IMAGE_RESOURCES[$resourceName])) return;
+        if (!isset(self::IMAGE_RESOURCES[$resourceName]["active"])) return;
         if (isset(self::IMAGE_RESOURCES[$resourceName]["backup"])) {
             if (is_array(self::IMAGE_RESOURCES[$resourceName]["active"])) {
                 // restore multiple files
@@ -285,7 +301,7 @@ class BrandManager
      */
     public function applyResource(string $resourceName): void
     {
-        if (!isset(self::IMAGE_RESOURCES[$resourceName])) return;
+        if (!isset(self::IMAGE_RESOURCES[$resourceName]["active"])) return;
         if (is_array(self::IMAGE_RESOURCES[$resourceName]["active"])) {
             foreach (self::IMAGE_RESOURCES[$resourceName]["active"] as $activeFile) {
                 copy(self::IMAGE_RESOURCES[$resourceName]["current"], $activeFile);
@@ -310,11 +326,21 @@ class BrandManager
     {
         if (!isset(self::IMAGE_RESOURCES[$resourceName])) return false;
         if (!isset($file["tmp_name"])) return false;
-        if (isset($file["error"]) && $file["error"] !== UPLOAD_ERR_OK) return false;
+        if (isset($file["error"]) && $file["error"] !== UPLOAD_ERR_OK) {
+            Session::addMessageAfterRedirect(sprintf("❌ Upload of file %s failed (file invalid)", $file["name"]));
+            return false;
+        }
 
         $extension = pathinfo($file["name"], PATHINFO_EXTENSION);
-        if (!in_array($extension, self::IMAGE_RESOURCES[$resourceName]["accept"], true)) return false;
-        return move_uploaded_file($file["tmp_name"], self::IMAGE_RESOURCES[$resourceName]["current"]);
+        if (!in_array($extension, self::IMAGE_RESOURCES[$resourceName]["accept"], true)) {
+            Session::addMessageAfterRedirect(sprintf("❌ Uploaded file %s is invalid (only %s accepted)", $file["name"], implode(", ", self::IMAGE_RESOURCES[$resourceName]["accept"])));
+            return false;
+        }
+        if (!move_uploaded_file($file["tmp_name"], self::IMAGE_RESOURCES[$resourceName]["current"])) {
+            Session::addMessageAfterRedirect(sprintf("❌ Upload of file %s failed", $file["name"]));
+            return false;
+        }
+        return true;
     }
 
     /**

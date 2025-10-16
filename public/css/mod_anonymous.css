@@ -27,6 +27,6 @@
  */
 
 .welcome-anonymous {
-    background: url(../../../../pics/plugin_mod/background.jpg) no-repeat fixed top;
+    background: url(../background.php) no-repeat fixed top;
     background-size: cover;
 }

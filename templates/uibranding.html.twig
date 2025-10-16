@@ -45,62 +45,87 @@
                                         <div class="row flex-row">
                                             {{ fields.smallTitle(__('Apply Modifications', 'mod'), 'ti ti-adjustments') }}
                                             {{ fields.textField('title', title, __('Page Title', 'mod')) }}
-                                            {{ fields.dropdownYesNo('show_background', show_background, __('Show Login background', 'mod')) }}
-                                            {{ fields.dropdownYesNo('show_custom_logos', show_custom_logos, __('Show Login background', 'mod')) }}
-                                            {{ fields.dropdownYesNo('show_custom_favicon', show_custom_favicon, __('Show Login background', 'mod')) }}
+                                            {{ fields.dropdownYesNo('show_background', show_background, __('Show login background', 'mod')) }}
+                                            {{ fields.dropdownYesNo('show_custom_logos', show_custom_logos, __('Show custom logos', 'mod')) }}
+                                            {{ fields.dropdownYesNo('show_custom_favicon', show_custom_favicon, __('Show custom favicon', 'mod')) }}
                                             {{ fields.smallTitle(__('Custom Images', 'mod'), 'ti ti-photo') }}
-                                            {{ fields.fileField('background', null, __('Background (min. 1920x1080 - JPG)', 'mod'), {
-                                                'multiple': false,
-                                                'onlyimages': true,
-                                                'showtitle': false
-                                            }) }}
+                                            <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                       for="background_input">
+                                                    {{ __('Background (min. 1920x1080 - JPG)', 'mod') }}
+                                                </label>
+                                                <div class="col-xxl-7  field-container">
+                                                    <input type="file" class="form-control" name="background"
+                                                           accept="image/jpeg" id="background_input"/>
+                                                </div>
+                                            </div>
                                             <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
                                                 <img style='max-width: 100%; max-height: 250px; width: auto;'
-                                                     src='/plugins/mod/front/serve.php?resource=background'
+                                                     src='/plugins/mod/front/resource.send.php?resource=background'
                                                      alt='{{ __('Background', 'mod') }}'/>
                                             </div>
                                             <div class="row border-top mb-2 ms-2 me-2"></div>
-                                            {{ fields.fileField('logo_s', null, __('Small Logo (53x53 - PNG)', 'mod'), {
-                                                'multiple': false,
-                                                'onlyimages': true,
-                                                'showtitle': false
-                                            }) }}
+                                            <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                       for="logo_s_input">
+                                                    {{ __('Small Logo (53x53 - PNG)', 'mod') }}
+                                                </label>
+                                                <div class="col-xxl-7  field-container">
+                                                    <input type="file" class="form-control" name="logo_s"
+                                                           accept="image/png" id="logo_s_input"/>
+                                                </div>
+                                            </div>
                                             <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
                                                 <img style='max-width: 100%; max-height: 250px; width: auto'
-                                                     src='/plugins/mod/front/serve.php?resource=logo_s'
+                                                     src='/plugins/mod/front/resource.send.php?resource=logo_s'
                                                      alt='{{ __('Small Logo', 'mod') }}'/>
                                             </div>
                                             <div class="row border-top mb-2 ms-2 me-2"></div>
-                                            {{ fields.fileField('logo_m', null, __('Medium Logo (100x55 - PNG)', 'mod'), {
-                                                'multiple': false,
-                                                'onlyimages': true,
-                                                'showtitle': false
-                                            }) }}
+                                            <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                       for="logo_m_input">
+                                                    {{ __('Medium Logo (100x55 - PNG)', 'mod') }}
+                                                </label>
+                                                <div class="col-xxl-7  field-container">
+                                                    <input type="file" class="form-control" name="logo_m"
+                                                           accept="image/png" id="logo_m_input"/>
+                                                </div>
+                                            </div>
                                             <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
                                                 <img style='max-width: 100%; max-height: 250px; width: auto'
-                                                     src='/plugins/mod/front/serve.php?resource=logo_m'
+                                                     src='/plugins/mod/front/resource.send.php?resource=logo_m'
                                                      alt='{{ __('Medium Logo', 'mod') }}'/>
                                             </div>
                                             <div class="row border-top mb-2 ms-2 me-2"></div>
-                                            {{ fields.fileField('logo_l', null, __('Large Logo (250x138 - PNG)', 'mod'), {
-                                                'multiple': false,
-                                                'onlyimages': true,
-                                                'showtitle': false
-                                            }) }}
+                                            <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                       for="logo_l_input">
+                                                    {{ __('Large Logo (250x138 - PNG)', 'mod') }}
+                                                </label>
+                                                <div class="col-xxl-7  field-container">
+                                                    <input type="file" class="form-control" name="logo_l"
+                                                           accept="image/png" id="logo_l_input"/>
+                                                </div>
+                                            </div>
                                             <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
                                                 <img style='max-width: 100%; max-height: 250px; width: auto'
-                                                     src='/plugins/mod/front/serve.php?resource=logo_l'
+                                                     src='/plugins/mod/front/resource.send.php?resource=logo_l'
                                                      alt='{{ __('Large Logo', 'mod') }}'/>
                                             </div>
                                             <div class="row border-top mb-2 ms-2 me-2"></div>
-                                            {{ fields.fileField('favicon', null, __('Favicon (16x16 - ICO)', 'mod'), {
-                                                'multiple': false,
-                                                'onlyimages': true,
-                                                'showtitle': false
-                                            }) }}
+                                            <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                       for="favicon_input">
+                                                    {{ __('Favicon (16x16 - ICO)', 'mod') }}
+                                                </label>
+                                                <div class="col-xxl-7  field-container">
+                                                    <input type="file" class="form-control" name="favicon"
+                                                           accept=".ico,image/x-icon" id="favicon_input"/>
+                                                </div>
+                                            </div>
                                             <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
                                                 <img style='max-width: 100%; max-height: 250px; width: auto'
-                                                     src='/plugins/mod/front/serve.php?resource=favicon'
+                                                     src='/plugins/mod/front/resource.send.php?resource=favicon'
                                                      alt='{{ __('Favicon', 'mod') }}'/>
                                             </div>
                                         </div>
