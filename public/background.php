@@ -28,49 +28,31 @@
  * -------------------------------------------------------------------------
  */
 
-use GlpiPlugin\Mod\BrandManager;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-/**
- * Plugin install process
- *
- * @return boolean
- */
-function plugin_mod_install()
-{
-    $brandManager = new BrandManager();
-    $brandManager->install();
-    return true;
+$file = GLPI_PLUGIN_DOC_DIR . "/mod/images/background.jpg";
+
+if (!file_exists($file)) {
+    return new Response('Image not found', 404);
 }
 
-/**
- * Plugin uninstall process
- *
- * @return boolean
- */
-function plugin_mod_uninstall()
-{
-    $brandManager = new BrandManager();
-//    $brandManager->changeTitle("i-Vertix");
-    $brandManager->uninstall();
-    return true;
+// remove existing conflicting headers
+if (!headers_sent()) {
+    header_remove('Pragma');
+    header_remove('Expires');
+    header_remove('Cache-Control');
 }
 
-function plugin_mod_activate()
-{
-    $brandManager = new BrandManager();
-    $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
-        $brandManager->applyResource($resourceName);
-    }
-    $brandManager->applyLoginPageModifier();
-}
-
-function plugin_mod_deactivate()
-{
-    $brandManager = new BrandManager();
-//    $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
-        $brandManager->restoreResource($resourceName);
-    }
-    $brandManager->disableLoginPageModifier();
-}
+$response = new BinaryFileResponse($file);
+$response->setPublic();
+$response->setMaxAge(31536000);
+$response->setSharedMaxAge(31536000);
+$response->mustRevalidate();
+$response->setEtag(md5_file($file));
+$response->setAutoLastModified();
+$response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE);
+$response->isNotModified(Request::createFromGlobals());
+return $response;

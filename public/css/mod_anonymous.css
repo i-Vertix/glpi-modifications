@@ -1,6 +1,4 @@
-<?php
-
-/**
+/*
  * -------------------------------------------------------------------------
  * UI Branding plugin for GLPI
  * -------------------------------------------------------------------------
@@ -28,49 +26,7 @@
  * -------------------------------------------------------------------------
  */
 
-use GlpiPlugin\Mod\BrandManager;
-
-/**
- * Plugin install process
- *
- * @return boolean
- */
-function plugin_mod_install()
-{
-    $brandManager = new BrandManager();
-    $brandManager->install();
-    return true;
-}
-
-/**
- * Plugin uninstall process
- *
- * @return boolean
- */
-function plugin_mod_uninstall()
-{
-    $brandManager = new BrandManager();
-//    $brandManager->changeTitle("i-Vertix");
-    $brandManager->uninstall();
-    return true;
-}
-
-function plugin_mod_activate()
-{
-    $brandManager = new BrandManager();
-    $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
-        $brandManager->applyResource($resourceName);
-    }
-    $brandManager->applyLoginPageModifier();
-}
-
-function plugin_mod_deactivate()
-{
-    $brandManager = new BrandManager();
-//    $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
-        $brandManager->restoreResource($resourceName);
-    }
-    $brandManager->disableLoginPageModifier();
+.welcome-anonymous {
+    background: url(../background.php) no-repeat fixed top;
+    background-size: cover;
 }

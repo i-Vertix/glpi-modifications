@@ -1,0 +1,90 @@
+# English translations for PACKAGE package.
+# Copyright (C) 2025 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-16 23:53+0200\n"
+"PO-Revision-Date: 2025-10-16 23:53+0200\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/uibranding.html.twig
+msgid "UI Branding"
+msgstr "UI Branding"
+
+#: templates/uibranding.html.twig
+msgid "Apply Modifications"
+msgstr "Apply Modifications"
+
+#: templates/uibranding.html.twig
+msgid "Page Title"
+msgstr "Page Title"
+
+#: templates/uibranding.html.twig
+msgid "Show login background"
+msgstr "Show login background"
+
+#: templates/uibranding.html.twig
+msgid "Show custom logos"
+msgstr "Show custom logos"
+
+#: templates/uibranding.html.twig
+msgid "Show custom favicon"
+msgstr "Show custom favicon"
+
+#: templates/uibranding.html.twig
+msgid "Custom Images"
+msgstr "Custom Images"
+
+#: templates/uibranding.html.twig
+msgid "Background (min. 1920x1080 - JPG)"
+msgstr "Background (min. 1920x1080 - JPG)"
+
+#: templates/uibranding.html.twig
+msgid "Background"
+msgstr "Background"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG)"
+msgstr "Small Logo (53x53 - PNG)"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo"
+msgstr "Small Logo"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG)"
+msgstr "Medium Logo (100x55 - PNG)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo"
+msgstr "Medium Logo"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG)"
+msgstr "Large Logo (250x138 - PNG)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo"
+msgstr "Large Logo"
+
+#: templates/uibranding.html.twig
+msgid "Favicon (16x16 - ICO)"
+msgstr "Favicon (16x16 - ICO)"
+
+#: templates/uibranding.html.twig
+msgid "Favicon"
+msgstr "Favicon"
+
+#: front/uibranding.php:51
+msgid "Please activate the plugin"
+msgstr "Please activate the plugin"

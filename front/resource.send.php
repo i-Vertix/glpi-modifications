@@ -28,41 +28,27 @@
  * -------------------------------------------------------------------------
  */
 
-use Glpi\Plugin\Hooks;
+use Glpi\Exception\Http\AccessDeniedHttpException;
 use GlpiPlugin\Mod\BrandManager;
+use function Safe\readfile;
 
-const PLUGIN_MOD_VERSION = "11.0.0";
-
-function plugin_init_mod()
-{
-    global $PLUGIN_HOOKS, $CFG_GLPI;
-
-    $PLUGIN_HOOKS['config_page']['mod'] = './front/uibranding.php';
-    if (Plugin::isPluginActive("mod")) {
-        $CFG_GLPI["app_name"] = BrandManager::getCurrentTitle();
-        if (BrandManager::isLoginPageModified()) {
-            // little bit hacky - could maybe be obsolete in upcoming versions
-            // this piece of hard-researched code enables the public/background.php wrapper file to be accessed without user being logged in
-            \Glpi\Http\Firewall::addPluginStrategyForLegacyScripts("mod", '/^\/background.php$/', \Glpi\Http\Firewall::STRATEGY_NO_CHECK);
-
-            $PLUGIN_HOOKS[Hooks::ADD_CSS_ANONYMOUS_PAGE]["mod"] = "./public/css/mod_anonymous.css";
-        }
-    }
+if (!Plugin::isPluginActive("mod")) {
+    throw new AccessDeniedHttpException();
 }
 
-function plugin_version_mod()
-{
-    global $LANG;
+Session::checkRight("config", UPDATE);
 
-    return array('name' => 'UI Branding',
-        'version' => PLUGIN_MOD_VERSION,
-        'author' => '<a href="https://www.i-vertix.com/">i-Vertix</a>',
-        'license' => 'GPLv3',
-        'homepage' => 'https://github.com/i-Vertix/glpi-modifications',
-        'requirements' => [
-            'glpi' => [
-                'min' => "11.0",
-                'max' => "12.0"
-            ]
-        ]);
+$key = $_GET['resource'] ?? '';
+if ($key === "" || !isset(BrandManager::IMAGE_RESOURCES[$key]["current"]) || !file_exists(BrandManager::IMAGE_RESOURCES[$key]["current"])) {
+    throw new AccessDeniedHttpException();
 }
+
+$file = BrandManager::IMAGE_RESOURCES[$key]["current"];
+
+header('Content-Type: ' . Toolbox::getMime($file));
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: Sun, 30 Jan 1966 06:30:00 GMT');
+header('Content-disposition: filename="' . basename($file) . '"');
+
+readfile($file);
