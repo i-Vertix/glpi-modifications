@@ -145,13 +145,13 @@ class BrandManager
     public function install(): void
     {
         // create directories for files, backup and images
-        if (!file_exists(self::FILES_DIR) && !mkdir(self::FILES_DIR, 0644) && !is_dir(self::FILES_DIR)) {
+        if (!file_exists(self::FILES_DIR) && !mkdir(self::FILES_DIR, 0755) && !is_dir(self::FILES_DIR)) {
             die(sprintf('Unable to create plugin directory (%s)', self::FILES_DIR));
         }
-        if (!file_exists(self::BACKUP_DIR) && !mkdir(self::BACKUP_DIR, 0644) && !is_dir(self::BACKUP_DIR)) {
+        if (!file_exists(self::BACKUP_DIR) && !mkdir(self::BACKUP_DIR, 0755) && !is_dir(self::BACKUP_DIR)) {
             die(sprintf('Unable to create plugin directory (%s)', self::BACKUP_DIR));
         }
-        if (!file_exists(self::IMAGES_DIR) && !mkdir(self::IMAGES_DIR, 0644) && !is_dir(self::IMAGES_DIR)) {
+        if (!file_exists(self::IMAGES_DIR) && !mkdir(self::IMAGES_DIR, 0755) && !is_dir(self::IMAGES_DIR)) {
             die(sprintf('Unable to create plugin directory (%s)', self::IMAGES_DIR));
         }
         Session::addMessageAfterRedirect("🆗 Created plugin directories");
