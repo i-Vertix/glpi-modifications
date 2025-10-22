@@ -31,7 +31,7 @@
 use Glpi\Plugin\Hooks;
 use GlpiPlugin\Mod\BrandManager;
 
-const PLUGIN_MOD_VERSION = "11.0.0";
+const PLUGIN_MOD_VERSION = "11.0.1";
 
 function plugin_init_mod()
 {
@@ -45,7 +45,7 @@ function plugin_init_mod()
             // this piece of hard-researched code enables the public/background.php wrapper file to be accessed without user being logged in
             \Glpi\Http\Firewall::addPluginStrategyForLegacyScripts("mod", '/^\/background.php$/', \Glpi\Http\Firewall::STRATEGY_NO_CHECK);
 
-            $PLUGIN_HOOKS[Hooks::ADD_CSS_ANONYMOUS_PAGE]["mod"] = "./public/css/mod_anonymous.css";
+            $PLUGIN_HOOKS[Hooks::ADD_CSS_ANONYMOUS_PAGE]["mod"] = "./css/mod_anonymous.css";
         }
     }
 }
