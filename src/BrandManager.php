@@ -145,41 +145,66 @@ class BrandManager
     public function install(): void
     {
         // create directories for files, backup and images
-        if (!file_exists(self::FILES_DIR) && !mkdir(self::FILES_DIR, 0755) && !is_dir(self::FILES_DIR)) {
-            die(sprintf('Unable to create plugin directory (%s)', self::FILES_DIR));
+        $someDirCreated = false;
+        if (!file_exists(self::FILES_DIR)) {
+            if (!mkdir(self::FILES_DIR, 0755) && !is_dir(self::FILES_DIR)) {
+                die(sprintf('Unable to create plugin directory (%s)', self::FILES_DIR));
+            }
+            $someDirCreated = true;
         }
-        if (!file_exists(self::BACKUP_DIR) && !mkdir(self::BACKUP_DIR, 0755) && !is_dir(self::BACKUP_DIR)) {
-            die(sprintf('Unable to create plugin directory (%s)', self::BACKUP_DIR));
+        if (!file_exists(self::BACKUP_DIR)) {
+            if (!mkdir(self::BACKUP_DIR, 0755) && !is_dir(self::BACKUP_DIR)) {
+                die(sprintf('Unable to create plugin directory (%s)', self::BACKUP_DIR));
+            }
+            $someDirCreated = true;
         }
-        if (!file_exists(self::IMAGES_DIR) && !mkdir(self::IMAGES_DIR, 0755) && !is_dir(self::IMAGES_DIR)) {
-            die(sprintf('Unable to create plugin directory (%s)', self::IMAGES_DIR));
+        if (!file_exists(self::IMAGES_DIR)) {
+            if (!mkdir(self::IMAGES_DIR, 0755) && !is_dir(self::IMAGES_DIR)) {
+                die(sprintf('Unable to create plugin directory (%s)', self::IMAGES_DIR));
+            }
+            $someDirCreated = true;
         }
-        Session::addMessageAfterRedirect("🆗 Created plugin directories");
+        if ($someDirCreated) Session::addMessageAfterRedirect("✅ Created plugin directories");
 
         // handle default images
+        $someResourceInstalled = false;
+        $someBackupCreated = false;
         foreach (self::IMAGE_RESOURCES as $imageResource => $paths) {
-            if (!file_exists($paths["current"]) && !copy($paths["default"], $paths["current"])) {
-                die("Unable to install $imageResource resource");
+            if (!file_exists($paths["current"])) {
+                if (!copy($paths["default"], $paths["current"])) {
+                    die("Unable to install $imageResource resource");
+                }
+                $someResourceInstalled = true;
             }
+
             // create backup
             if (isset($paths["backup"], $paths["active"])) {
                 if (is_array($paths["backup"])) {
                     foreach ($paths["backup"] as $backupIndex => $backupPath) {
-                        if (!file_exists($backupPath) && !copy($paths["active"][$backupIndex], $backupPath)) {
-                            die("Unable to backup $imageResource resource ($backupIndex)");
+                        if (!file_exists($backupPath)) {
+                            if (!copy($paths["active"][$backupIndex], $backupPath)) {
+                                die("Unable to backup $imageResource resource ($backupIndex)");
+                            }
+                            $someBackupCreated = true;
                         }
                     }
-                } else if (!file_exists($paths["backup"]) && !copy($paths["active"], $paths["backup"])) {
-                    die("Unable to backup $imageResource resource");
+                } else if (!file_exists($paths["backup"])) {
+                    if (!copy($paths["active"], $paths["backup"])) {
+                        die("Unable to backup $imageResource resource");
+                    }
+                    $someBackupCreated = true;
                 }
             }
         }
-        Session::addMessageAfterRedirect("🆗 Installed image resources and created backups");
+        if ($someResourceInstalled) Session::addMessageAfterRedirect("✅ Installed image resources");
+        if ($someBackupCreated) Session::addMessageAfterRedirect("✅ Created backups");
 
-        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
-            die("Unable to install modifiers");
+        if (!file_exists(self::FILES_DIR . "/modifiers.ini")) {
+            if (!self::initModifiers()) {
+                die("Unable to install modifiers");
+            }
+            Session::addMessageAfterRedirect("✅ Installed modifiers");
         }
-        Session::addMessageAfterRedirect("🆗 Installed modifiers");
     }
 
     /**
@@ -191,10 +216,10 @@ class BrandManager
             $this->restoreResource($resourceName);
         }
         $this->disableLoginPageModifier();
-        Session::addMessageAfterRedirect("🆗 Restored backups");
+        Session::addMessageAfterRedirect("♻️ Restored backups");
         // delete files
         Toolbox::deleteDir(self::FILES_DIR);
-        Session::addMessageAfterRedirect("🆗 Removed resources and backups");
+        Session::addMessageAfterRedirect("🗑️ Removed resources and backups");
     }
 
     /**
