@@ -47,6 +47,7 @@ Additionally, please **remove the current backup directory** located in `<glpi r
     - `read/write` permissions on the `<glpi root>/public/pics/favicon.ico` file
     - `read/write` permissions on the `<glpi root>/public/pics/logos` directory
     - `read/write` permissions on **all files** inside of `<glpi root>/public/pics/logos` directory
+    - In case you are using SELinux, you must verify that your apache/webserver user has the permission to `chmod` his own files (necessary to uninstall the plugin correctly)
 
    Here are some prepared commands for you to execute from the **glpi root directory**, presuming your webserver user is
    already the owner of all relevant files and directories:
@@ -55,10 +56,16 @@ Additionally, please **remove the current backup directory** located in `<glpi r
    sudo chmod 644 ./public/pics/logos/*
    sudo chmod 644 ./public/pics/favicon.ico
    ```
-6. In case you migrated from GLPI 10 and created a backup of your customized images you can now move the image backups
+   With this command you can disable SELinux for apache/webserver related stuff (to verify):
+
+   ```shell
+   setsebool -P httpd_unified 1
+   ```
+   
+7. In case you migrated from GLPI 10 and created a backup of your customized images you can now move the image backups
    to `./plugins/mod/resources/images`
-7. Log into GLPI with a super-admin account and install the plugin
-8. After the installation is completed, activate the plugin
+8. Log into GLPI with a super-admin account and install the plugin
+9. After the installation is completed, activate the plugin
 
 ## 👨‍🔧 Use the plugin
 
