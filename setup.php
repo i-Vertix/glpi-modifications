@@ -1,3 +1,7 @@
+// Required by GLPI: alias for plugin_version_mod
+function plugin_version_modifications() {
+    return plugin_version_mod();
+}
 <?php
 
 /**
