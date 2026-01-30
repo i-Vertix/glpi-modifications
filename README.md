@@ -25,8 +25,8 @@ This plugin and its maintainers are not connected to the GLPI project.
 Since the plugin is very lightweight and does not really do much (no database tables ecc.), we decided to **not have** a
 "real" migration (current custom images will be lost).
 If you want to reuse your customized images, please create a backup before installing
-the new version into the GLPI plugins folder. The images are located in `<glpi root>/plugins/mod/resources`.
-Additionally, please **remove the current backup directory** located in `<glpi root>/files/_plugins/mod/backups`.
+the new version into the GLPI plugins folder. The images are located in `/var/www/html/glpi/plugins/mod/resources`.
+Additionally, please **remove the current backup directory** located in `/var/lib/glpi/_plugins/mod/backups`.
 
 ## 🔧 Installation
 
@@ -35,27 +35,25 @@ Additionally, please **remove the current backup directory** located in `<glpi r
 
 1. Download the latest version
    from [https://github.com/i-Vertix/glpi-modifications/releases](https://github.com/i-Vertix/glpi-modifications/releases).
-2. Extract the archive into the GLPI `plugins` folder (when updating, make sure to delete the current `mod` folder
+2. Extract the archive into the GLPI `plugins` folder, located in your glpi root directory (when updating, make sure to delete the current `mod` folder
    first)
-3. The new folder inside of `plugins` must be named `mod`
-4. All files inside the folder must have at least `read` permissions for your webserver user
-5. The following additional permissions for your webserver user are required for the plugin to work properly:
 
-    - `read/write` permissions on the `<glpi root>/files/_plugins` directory as the plugin will create the directory
-      `mod` inside of it
-    - `read/write` permissions on the `<glpi root>/public/pics` directory
-    - `read/write` permissions on the `<glpi root>/public/pics/favicon.ico` file
-    - `read/write` permissions on the `<glpi root>/public/pics/logos` directory
-    - `read/write` permissions on **all files** inside of `<glpi root>/public/pics/logos` directory
-    - In case you are using SELinux, you must verify that your apache/webserver user has the permission to `chmod` his own files (necessary to uninstall the plugin correctly)
-
-   Here are some prepared commands for you to execute from the **glpi root directory**, presuming your webserver user is
-   already the owner of all relevant files and directories:
+> [!IMPORTANT]
+> Please be aware that the plugin does not work properly if installed into the `marketplace` directory !
+   
+4. The new folder inside of `plugins` must be named `mod`
+5. The following additional permissions are **required** for the plugin to work properly (change `apache` to your webserver-related username):
 
    ```shell
-   sudo chmod 644 ./public/pics/logos/*
-   sudo chmod 644 ./public/pics/favicon.ico
+   chown -R apache: /var/www/html/glpi/public/pics
+   chown -R apache: /var/www/html/glpi/plugins/mod/resources
+   find /var/www/html/glpi/plugins/mod -type f -exec chmod 0644 {} \;
+   find /var/www/html/glpi/plugins/mod -type d -exec chmod 0755 {} \;
    ```
+
+   All other required file permissions should already be given by a correct glpi installation (such as permissions in /var/lib ecc).
+   
+   In case you are using SELinux, you must verify that your apache/webserver user has the permission to `chmod` his own files (necessary to uninstall the plugin correctly).
    With this command you can disable SELinux for apache/webserver related stuff (to verify):
 
    ```shell
@@ -63,7 +61,7 @@ Additionally, please **remove the current backup directory** located in `<glpi r
    ```
    
 7. In case you migrated from GLPI 10 and created a backup of your customized images you can now move the image backups
-   to `./plugins/mod/resources/images`
+   to `/var/www/html/glpi/plugins/mod/resources/images`
 8. Log into GLPI with a super-admin account and install the plugin
 9. After the installation is completed, activate the plugin
 
