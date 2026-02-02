@@ -35,33 +35,44 @@ Additionally, please **remove the current backup directory** located in `/var/li
 
 1. Download the latest version
    from [https://github.com/i-Vertix/glpi-modifications/releases](https://github.com/i-Vertix/glpi-modifications/releases).
-2. Extract the archive into the GLPI `plugins` folder, located in your glpi root directory (when updating, make sure to delete the current `mod` folder
+2. Extract the archive into the GLPI `plugins` or `marketplace` folder, located in your glpi root directory (when updating, make sure to delete the current `mod` folder
    first)
 
 > [!IMPORTANT]
 > Please be aware that the plugin does not work properly if installed into the `marketplace` directory !
    
-4. The new folder inside of `plugins` must be named `mod`
+4. The new folder inside of `plugins`/`marketplace` must be named `mod`
 5. The following additional permissions are **required** for the plugin to work properly (change `apache` to your webserver-related username):
 
+   In case you installed in `/plugins`:
+   
    ```shell
    chown -R apache: /var/www/html/glpi/public/pics
    chown -R apache: /var/www/html/glpi/plugins/mod/resources
    find /var/www/html/glpi/plugins/mod -type f -exec chmod 0644 {} \;
    find /var/www/html/glpi/plugins/mod -type d -exec chmod 0755 {} \;
    ```
+   
+   In case you installed in `marketplace`:
+   
+   ```shell
+   chown -R apache: /var/www/html/glpi/public/pics
+   chown -R apache: /var/www/html/glpi/marketplace/mod/resources
+   find /var/www/html/glpi/marketplace/mod -type f -exec chmod 0644 {} \;
+   find /var/www/html/glpi/marketplace/mod -type d -exec chmod 0755 {} \;
+   ```
 
    All other required file permissions should already be given by a correct glpi installation (such as permissions in /var/lib ecc).
    
    In case you are using SELinux, you must verify that your apache/webserver user has the permission to `chmod` his own files (necessary to uninstall the plugin correctly).
-   With this command you can disable SELinux for apache/webserver related stuff (to verify):
+   With this command you can disable SELinux for apache/webserver-related stuff (to verify):
 
    ```shell
    setsebool -P httpd_unified 1
    ```
    
 7. In case you migrated from GLPI 10 and created a backup of your customized images you can now move the image backups
-   to `/var/www/html/glpi/plugins/mod/resources/images`
+   to `/var/www/html/glpi/plugins/mod/resources/images` (or `/var/www/html/glpi/marketplace/mod/resources/images`)
 8. Log into GLPI with a super-admin account and install the plugin
 9. After the installation is completed, activate the plugin
 
