@@ -31,6 +31,7 @@
 namespace GlpiPlugin\Mod;
 
 use Glpi\Application\View\TemplateRenderer;
+use Plugin;
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -134,9 +135,9 @@ class UIBranding
      */
     public function display(): bool
     {
-        global $CFG_GLPI;
         TemplateRenderer::getInstance()->display('@mod/uibranding.html.twig', [
-            "url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/uibranding.php",
+            "url" => Plugin::getPhpDir("mod", false) . "/front/uibranding.php",
+            "preview_url" => Plugin::getPhpDir("mod", false) . "/front/resource.send.php",
             "show_background" => BrandManager::isLoginPageModified(),
             "show_custom_logos" => BrandManager::isActiveResourceModified("logo_s")
                 || BrandManager::isActiveResourceModified("logo_m")

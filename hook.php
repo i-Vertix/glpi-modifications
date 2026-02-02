@@ -59,7 +59,7 @@ function plugin_mod_activate()
 {
     $brandManager = new BrandManager();
     $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
+    foreach (array_keys(BrandManager::getImageResources()) as $resourceName) {
         $brandManager->applyResource($resourceName);
     }
     $brandManager->applyLoginPageModifier();
@@ -69,7 +69,7 @@ function plugin_mod_deactivate()
 {
     $brandManager = new BrandManager();
 //    $brandManager->changeTitle("i-Vertix");
-    foreach (array_keys(BrandManager::IMAGE_RESOURCES) as $resourceName) {
+    foreach (array_keys(BrandManager::getImageResources()) as $resourceName) {
         $brandManager->restoreResource($resourceName);
     }
     $brandManager->disableLoginPageModifier();

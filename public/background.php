@@ -28,12 +28,13 @@
  * -------------------------------------------------------------------------
  */
 
+use GlpiPlugin\Mod\BrandManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-$file = GLPI_PLUGIN_DOC_DIR . "/mod/images/background.jpg";
+$file = BrandManager::getImageResources()["background"]["current"];
 
 if (!file_exists($file)) {
     return new Response('Image not found', 404);
