@@ -135,9 +135,10 @@ class UIBranding
      */
     public function display(): bool
     {
+        global $CFG_GLPI;
         TemplateRenderer::getInstance()->display('@mod/uibranding.html.twig', [
-            "url" => Plugin::getPhpDir("mod", false) . "/front/uibranding.php",
-            "preview_url" => Plugin::getPhpDir("mod", false) . "/front/resource.send.php",
+            "url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/uibranding.php",
+            "preview_url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/resource.send.php",
             "show_background" => BrandManager::isLoginPageModified(),
             "show_custom_logos" => BrandManager::isActiveResourceModified("logo_s")
                 || BrandManager::isActiveResourceModified("logo_m")
