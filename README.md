@@ -15,7 +15,7 @@ This plugin is used to customize brand-related images of your GLPI instance.
 This plugin got restructured completely to match GLPI 11 and (hopefully) its successors.
 The plugin initially emerged from
 [https://github.com/stdonato/glpi-modifications](https://github.com/stdonato/glpi-modifications)
-as the original author did continue to support the original plugin.
+as the original author did not continue to support the original plugin.
 Since the plugin was forked from the original one, all of its code was rewritten and aligned to new GLPI guidelines.
 
 This plugin and its maintainers are not connected to the GLPI project.
