@@ -1,4 +1,4 @@
-# English translations for PACKAGE package.
+# Spanish (Spain) translations for PACKAGE package.
 # Copyright (C) 2025 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Automatically generated, 2025.
@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-16 23:53+0200\n"
 "PO-Revision-Date: 2025-10-16 23:53+0200\n"
-"Last-Translator: Automatically generated\n"
+"Last-Translator: Edwin Elias Alvarez\n"
 "Language-Team: none\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
@@ -31,11 +31,11 @@ msgstr "Título de la página"
 
 #: templates/uibranding.html.twig
 msgid "Show login background"
-msgstr "Mostrar fondo de login"
+msgstr "Mostrar fondo de inicio de sesión"
 
 #: templates/uibranding.html.twig
 msgid "Show custom logos"
-msgstr "Mostrar logotipos personalizado"
+msgstr "Mostrar logotipos personalizados"
 
 #: templates/uibranding.html.twig
 msgid "Show custom favicon"
@@ -47,7 +47,7 @@ msgstr "Imágenes personalizadas"
 
 #: templates/uibranding.html.twig
 msgid "Background (min. 1920x1080 - JPG)"
-msgstr "Fondo (min. 1920x1080 - JPG)"
+msgstr "Fondo (mín. 1920x1080 - JPG)"
 
 #: templates/uibranding.html.twig
 msgid "Background"
@@ -55,7 +55,7 @@ msgstr "Fondo"
 
 #: templates/uibranding.html.twig
 msgid "Small Logo (53x53 - PNG)"
-msgstr "Logotipo peqieño (53x53 - PNG)"
+msgstr "Logotipo pequeño (53x53 - PNG)"
 
 #: templates/uibranding.html.twig
 msgid "Small Logo"
@@ -87,4 +87,4 @@ msgstr "Favicon"
 
 #: front/uibranding.php:51
 msgid "Please activate the plugin"
-msgstr "Por favor, activa el complemento"
+msgstr "Por favor, activa el plugin"

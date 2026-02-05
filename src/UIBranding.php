@@ -137,6 +137,7 @@ class UIBranding
         global $CFG_GLPI;
         TemplateRenderer::getInstance()->display('@mod/uibranding.html.twig', [
             "url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/uibranding.php",
+            "preview_url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/resource.send.php",
             "show_background" => BrandManager::isLoginPageModified(),
             "show_custom_logos" => BrandManager::isActiveResourceModified("logo_s")
                 || BrandManager::isActiveResourceModified("logo_m")
