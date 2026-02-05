@@ -37,12 +37,8 @@ Additionally, please **remove the current backup directory** located in `/var/li
    from [https://github.com/i-Vertix/glpi-modifications/releases](https://github.com/i-Vertix/glpi-modifications/releases).
 2. Extract the archive into the GLPI `plugins` or `marketplace` folder, located in your glpi root directory (when updating, make sure to delete the current `mod` folder
    first)
-
-> [!IMPORTANT]
-> Please be aware that the plugin does not work properly if installed into the `marketplace` directory !
-   
-4. The new folder inside of `plugins`/`marketplace` must be named `mod`
-5. The following additional permissions are **required** for the plugin to work properly (change `apache` to your webserver-related username):
+3. The new folder inside of `plugins`/`marketplace` must be named `mod`
+4. The following additional permissions are **required** for the plugin to work properly (change `apache` to your webserver-related username):
 
    In case you installed in `/plugins`:
    
@@ -71,10 +67,10 @@ Additionally, please **remove the current backup directory** located in `/var/li
    setsebool -P httpd_unified 1
    ```
    
-7. In case you migrated from GLPI 10 and created a backup of your customized images you can now move the image backups
+5. In case you migrated from GLPI 10 and created a backup of your customized images you can now move the image backups
    to `/var/www/html/glpi/plugins/mod/resources/images` (or `/var/www/html/glpi/marketplace/mod/resources/images`)
-8. Log into GLPI with a super-admin account and install the plugin
-9. After the installation is completed, activate the plugin
+6. Log into GLPI with a super-admin account and install the plugin
+7. After the installation is completed, activate the plugin
 
 ## 👨‍🔧 Use the plugin
 
