@@ -31,7 +31,7 @@
 use Glpi\Plugin\Hooks;
 use GlpiPlugin\Mod\BrandManager;
 
-const PLUGIN_MOD_VERSION = "11.0.3";
+const PLUGIN_MOD_VERSION = "11.0.4";
 
 function plugin_init_mod()
 {
