@@ -88,3 +88,59 @@ msgstr ""
 #: front/uibranding.php:51
 msgid "Please activate the plugin"
 msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Enable theme-based logo modifications"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Theme-based logos"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Black"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Grey"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "White"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (black)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (grey)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (white)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (black)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (grey)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (white)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (black)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (grey)"
+msgstr ""
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (white)"
+msgstr ""
