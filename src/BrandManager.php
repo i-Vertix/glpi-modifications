@@ -109,6 +109,27 @@ class BrandManager
                 ],
                 "accept" => ["png"]
             ],
+            "logo_s_black" => [
+                "default" => self::getResourceDir() . "/images/logo-G-100.png",
+                "current" => self::IMAGES_DIR . "/logo-G-100-black.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-G-100-black.png",
+                "backup" => self::BACKUP_DIR . "/logo-G-100-black.png",
+                "accept" => ["png"]
+            ],
+            "logo_s_grey" => [
+                "default" => self::getResourceDir() . "/images/logo-G-100.png",
+                "current" => self::IMAGES_DIR . "/logo-G-100-grey.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-G-100-grey.png",
+                "backup" => self::BACKUP_DIR . "/logo-G-100-grey.png",
+                "accept" => ["png"]
+            ],
+            "logo_s_white" => [
+                "default" => self::getResourceDir() . "/images/logo-G-100.png",
+                "current" => self::IMAGES_DIR . "/logo-G-100-white.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-G-100-white.png",
+                "backup" => self::BACKUP_DIR . "/logo-G-100-white.png",
+                "accept" => ["png"]
+            ],
             "logo_m" => [
                 "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
                 "current" => self::IMAGES_DIR . "/logo-GLPI-100.png",
@@ -124,6 +145,27 @@ class BrandManager
                 ],
                 "accept" => ["png"]
             ],
+            "logo_m_black" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-100-black.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-black.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-100-black.png",
+                "accept" => ["png"]
+            ],
+            "logo_m_grey" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-100-grey.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-grey.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-100-grey.png",
+                "accept" => ["png"]
+            ],
+            "logo_m_white" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-100-white.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-white.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-100-white.png",
+                "accept" => ["png"]
+            ],
             "logo_l" => [
                 "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
                 "current" => self::IMAGES_DIR . "/logo-GLPI-250.png",
@@ -137,6 +179,27 @@ class BrandManager
                     self::BACKUP_DIR . "/logo-GLPI-250-grey.png",
                     self::BACKUP_DIR . "/logo-GLPI-250-white.png",
                 ],
+                "accept" => ["png"]
+            ],
+            "logo_l_black" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-250-black.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-black.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-250-black.png",
+                "accept" => ["png"]
+            ],
+            "logo_l_grey" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-250-grey.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-grey.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-250-grey.png",
+                "accept" => ["png"]
+            ],
+            "logo_l_white" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-250-white.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-white.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-250-white.png",
                 "accept" => ["png"]
             ],
         ];
@@ -348,6 +411,14 @@ class BrandManager
     {
         $imageResources = self::getImageResources();
         if (!isset($imageResources[$resourceName]["active"])) return;
+
+        // Make sure the current resource exists (especially for newly introduced resources)
+        if (!file_exists($imageResources[$resourceName]["current"]) && isset($imageResources[$resourceName]["default"])) {
+            if (file_exists($imageResources[$resourceName]["default"])) {
+                copy($imageResources[$resourceName]["default"], $imageResources[$resourceName]["current"]);
+            }
+        }
+
         if (is_array($imageResources[$resourceName]["active"])) {
             foreach ($imageResources[$resourceName]["active"] as $activeFile) {
                 copy($imageResources[$resourceName]["current"], $activeFile);
@@ -457,6 +528,84 @@ class BrandManager
             return false;
         }
         return $ini["login"] === "1";
+    }
+
+    /**
+     * Returns whether theme-specific logo modification is enabled.
+     *
+     * @return bool
+     */
+    public static function isThemeLogosEnabled(): bool
+    {
+        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
+            return false;
+        }
+        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
+        if ($ini === false) {
+            return false;
+        }
+        if (!isset($ini["theme_logos"])) {
+            self::initModifiers();
+            return false;
+        }
+        return $ini["theme_logos"] === "1";
+    }
+
+    /**
+     * Enables/disables theme-specific logo modification.
+     *
+     * @param bool $enabled
+     * @return void
+     */
+    public function setThemeLogosEnabled(bool $enabled): void
+    {
+        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
+            return;
+        }
+        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
+        if ($ini === false) {
+            /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
+            $ini = ["title" => "GLPI", "login" => "0", "theme_logos" => "0"];
+        }
+        $ini["theme_logos"] = $enabled ? "1" : "0";
+        $iniString = [];
+        foreach ($ini as $key => $value) {
+            $iniString[] = "$key=$value";
+        }
+        file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
+    }
+
+    /**
+     * Checks whether any logo resource is currently in a modified state.
+     *
+     * This is useful to support theme-specific logo resources in addition to the
+     * generic logo paths.
+     *
+     * @param bool $includeTheme If true, check theme-specific logo variants as well.
+     * @return bool Returns true if any logo resource is modified; otherwise false.
+     */
+    public static function isAnyLogoModified(bool $includeTheme = true): bool
+    {
+        $resources = ["logo_s", "logo_m", "logo_l"];
+        if ($includeTheme) {
+            $resources = array_merge($resources, [
+                "logo_s_black",
+                "logo_s_grey",
+                "logo_s_white",
+                "logo_m_black",
+                "logo_m_grey",
+                "logo_m_white",
+                "logo_l_black",
+                "logo_l_grey",
+                "logo_l_white",
+            ]);
+        }
+        foreach ($resources as $resource) {
+            if (self::isActiveResourceModified($resource)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
