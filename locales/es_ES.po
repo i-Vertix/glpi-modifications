@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: es_ES v1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-16 23:53+0200\n"
-"PO-Revision-Date: 2025-10-16 23:53+0200\n"
-"Last-Translator: Edwin Elias Alvarez\n"
+"PO-Revision-Date: 2026-03-13 10:55+0200\n"
+"Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
@@ -88,3 +88,59 @@ msgstr "Favicon"
 #: front/uibranding.php:51
 msgid "Please activate the plugin"
 msgstr "Por favor, activa el plugin"
+
+#: templates/uibranding.html.twig
+msgid "Enable theme-based logo modifications"
+msgstr "Habilitar modificaciones de logotipos basadas en tema"
+
+#: templates/uibranding.html.twig
+msgid "Theme-based logos"
+msgstr "Logotipos basados en tema"
+
+#: templates/uibranding.html.twig
+msgid "Black"
+msgstr "Negro"
+
+#: templates/uibranding.html.twig
+msgid "Grey"
+msgstr "Gris"
+
+#: templates/uibranding.html.twig
+msgid "White"
+msgstr "Blanco"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (black)"
+msgstr "Logotipo pequeño (53x53 - PNG) (negro)"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (grey)"
+msgstr "Logotipo pequeño (53x53 - PNG) (gris)"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (white)"
+msgstr "Logotipo pequeño (53x53 - PNG) (blanco)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (black)"
+msgstr "Logotipo mediano (100x55 - PNG) (negro)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (grey)"
+msgstr "Logotipo mediano (100x55 - PNG) (gris)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (white)"
+msgstr "Logotipo mediano (100x55 - PNG) (blanco)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (black)"
+msgstr "Logotipo grande (250x138 - PNG) (negro)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (grey)"
+msgstr "Logotipo grande (250x138 - PNG) (gris)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (white)"
+msgstr "Logotipo grande (250x138 - PNG) (blanco)"
