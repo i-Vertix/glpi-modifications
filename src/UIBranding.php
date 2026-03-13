@@ -51,17 +51,41 @@ class UIBranding
         $logosChanged = false;
         $faviconChanged = false;
 
+        // Theme specific logo variants (black/grey/white)
+        $useThemeLogos = isset($data['use_theme_logos']) && $data['use_theme_logos'] === '1';
+        $brandManager->setThemeLogosEnabled($useThemeLogos);
+
+        $themeLogoResources = [
+            'logo_s_black',
+            'logo_s_grey',
+            'logo_s_white',
+            'logo_m_black',
+            'logo_m_grey',
+            'logo_m_white',
+            'logo_l_black',
+            'logo_l_grey',
+            'logo_l_white',
+        ];
+
         if (isset($files['background']['name']) && $files['background']['name'] !== '') {
             $backgroundChanged = $brandManager->uploadResource("background", $files['background']);
         }
-        if (isset($files['logo_s']['name']) && $files['logo_s']['name'] !== '') {
-            $logosChanged = $brandManager->uploadResource("logo_s", $files['logo_s']);
+        if (!$useThemeLogos) {
+            if (isset($files['logo_s']['name']) && $files['logo_s']['name'] !== '') {
+                $logosChanged = $brandManager->uploadResource("logo_s", $files['logo_s']);
+            }
+            if (isset($files['logo_m']['name']) && $files['logo_m']['name'] !== '') {
+                $logosChanged = $brandManager->uploadResource("logo_m", $files['logo_m']);
+            }
+            if (isset($files['logo_l']['name']) && $files['logo_l']['name'] !== '') {
+                $logosChanged = $brandManager->uploadResource("logo_l", $files['logo_l']);
+            }
         }
-        if (isset($files['logo_m']['name']) && $files['logo_m']['name'] !== '') {
-            $logosChanged = $brandManager->uploadResource("logo_m", $files['logo_m']);
-        }
-        if (isset($files['logo_l']['name']) && $files['logo_l']['name'] !== '') {
-            $logosChanged = $brandManager->uploadResource("logo_l", $files['logo_l']);
+
+        foreach ($themeLogoResources as $resourceName) {
+            if (isset($files[$resourceName]['name']) && $files[$resourceName]['name'] !== '') {
+                $logosChanged = $brandManager->uploadResource($resourceName, $files[$resourceName]) || $logosChanged;
+            }
         }
 
         if (isset($files['favicon']['name']) && $files['favicon']['name'] !== '') {
@@ -85,30 +109,50 @@ class UIBranding
 
         if (isset($data['show_custom_logos'])) {
             if ($data['show_custom_logos'] === '1') {
-                // overwrite background if changed or not overwritten yet
-                if (
-                    $logosChanged
-                    || !$brandManager::isActiveResourceModified("logo_s")
-                    || !$brandManager::isActiveResourceModified("logo_m")
-                    || !$brandManager::isActiveResourceModified("logo_l")
-                ) {
+                // overwrite logos if changed or if custom logos are not yet applied
+                $needsApply = $logosChanged;
+                $resourcesToCheck = ["logo_s", "logo_m", "logo_l"];
+                if ($useThemeLogos) {
+                    $resourcesToCheck = array_merge($resourcesToCheck, $themeLogoResources);
+                }
+                foreach ($resourcesToCheck as $resource) {
+                    if (!$brandManager::isActiveResourceModified($resource)) {
+                        $needsApply = true;
+                        break;
+                    }
+                }
+
+                if ($needsApply) {
+                    if (!$useThemeLogos) {
+                    // apply base logos
                     $brandManager->applyResource("logo_s");
                     $brandManager->applyResource("logo_m");
                     $brandManager->applyResource("logo_l");
+                } else {
+                    // apply only theme variants
+                    foreach ($themeLogoResources as $resourceName) {
+                        $brandManager->applyResource($resourceName);
+                    }
                 }
-            } else if (
-                $brandManager::isActiveResourceModified("logo_s")
-                || $brandManager::isActiveResourceModified("logo_m")
-                || $brandManager::isActiveResourceModified("logo_l")
-            ) {
+                }
+            } else if (BrandManager::isAnyLogoModified(true)) {
                 $brandManager->restoreResource("logo_s");
                 $brandManager->restoreResource("logo_m");
                 $brandManager->restoreResource("logo_l");
+                foreach ($themeLogoResources as $resourceName) {
+                    $brandManager->restoreResource($resourceName);
+                }
             }
         } else if ($logosChanged) {
-            $brandManager->applyResource("logo_s");
-            $brandManager->applyResource("logo_m");
-            $brandManager->applyResource("logo_l");
+            if (!$useThemeLogos) {
+                $brandManager->applyResource("logo_s");
+                $brandManager->applyResource("logo_m");
+                $brandManager->applyResource("logo_l");
+            } else {
+                foreach ($themeLogoResources as $resourceName) {
+                    $brandManager->applyResource($resourceName);
+                }
+            }
         }
 
         if (isset($data['show_custom_favicon'])) {
@@ -139,9 +183,8 @@ class UIBranding
             "url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/uibranding.php",
             "preview_url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/resource.send.php",
             "show_background" => BrandManager::isLoginPageModified(),
-            "show_custom_logos" => BrandManager::isActiveResourceModified("logo_s")
-                || BrandManager::isActiveResourceModified("logo_m")
-                || BrandManager::isActiveResourceModified("logo_l"),
+            "show_custom_logos" => BrandManager::isAnyLogoModified(true),
+            "use_theme_logos" => BrandManager::isThemeLogosEnabled(),
             "show_custom_favicon" => BrandManager::isActiveResourceModified("favicon"),
             "title" => BrandManager::getCurrentTitle(),
         ]);
