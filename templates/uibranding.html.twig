@@ -47,25 +47,13 @@
                                             {{ fields.textField('title', title, __('Page Title', 'mod')) }}
                                             {{ fields.dropdownYesNo('show_background', show_background, __('Show login background', 'mod')) }}
                                             {{ fields.dropdownYesNo('show_custom_logos', show_custom_logos, __('Show custom logos', 'mod')) }}
-                                            <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
-                                                <label class="col-form-label col-xxl-5 text-xxl-end "
-                                                       for="use_theme_logos">
-                                                    {{ __('Enable theme-based logo modifications', 'mod') }}
-                                                </label>
-                                                <div class="col-xxl-7  field-container">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox"
-                                                               id="use_theme_logos" name="use_theme_logos" value="1"
-                                                               {% if use_theme_logos %}checked{% endif %} />
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            {{ fields.dropdownYesNo('use_theme_logos', use_theme_logos, __('Enable theme-based logo modifications', 'mod')) }}
                                             {{ fields.dropdownYesNo('show_custom_favicon', show_custom_favicon, __('Show custom favicon', 'mod')) }}
                                             {{ fields.smallTitle(__('Custom Images', 'mod'), 'ti ti-photo') }}
                                             <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                 <label class="col-form-label col-xxl-5 text-xxl-end "
                                                        for="background_input">
-                                                    {{ __('Background (min. 1920x1080 - JPG)', 'mod') }}
+                                                    {{ __('Background', 'mod') ~ ' (min. 1920x1080 - JPG)' }}
                                                 </label>
                                                 <div class="col-xxl-7  field-container">
                                                     <input type="file" class="form-control" name="background"
@@ -83,7 +71,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_s_input">
-                                                        {{ __('Small Logo (53x53 - PNG)', 'mod') }}
+                                                        {{ __('Small Logo', 'mod') ~ ' (53x53 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_s"
@@ -99,7 +87,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_m_input">
-                                                        {{ __('Medium Logo (100x55 - PNG)', 'mod') }}
+                                                        {{ __('Medium Logo', 'mod') ~ ' (100x55 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_m"
@@ -115,7 +103,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_l_input">
-                                                        {{ __('Large Logo (250x138 - PNG)', 'mod') }}
+                                                        {{ __('Large Logo', 'mod') ~ ' (250x138 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_l"
@@ -137,7 +125,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_s_black_input">
-                                                        {{ __('Small Logo (53x53 - PNG) (black)', 'mod') }}
+                                                        {{ __('Small Logo (black)', 'mod') ~ ' (53x53 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_s_black"
@@ -154,7 +142,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_s_grey_input">
-                                                        {{ __('Small Logo (53x53 - PNG) (grey)', 'mod') }}
+                                                        {{ __('Small Logo (grey)', 'mod') ~ ' (53x53 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_s_grey"
@@ -171,7 +159,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_s_white_input">
-                                                        {{ __('Small Logo (53x53 - PNG) (white)', 'mod') }}
+                                                        {{ __('Small Logo (white)', 'mod') ~ ' (53x53 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_s_white"
@@ -188,7 +176,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_m_black_input">
-                                                        {{ __('Medium Logo (100x55 - PNG) (black)', 'mod') }}
+                                                        {{ __('Medium Logo (black)', 'mod') ~ ' (100x55 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_m_black"
@@ -205,7 +193,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_m_grey_input">
-                                                        {{ __('Medium Logo (100x55 - PNG) (grey)', 'mod') }}
+                                                        {{ __('Medium Logo (grey)', 'mod') ~ ' (100x55 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_m_grey"
@@ -222,7 +210,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_m_white_input">
-                                                        {{ __('Medium Logo (100x55 - PNG) (white)', 'mod') }}
+                                                        {{ __('Medium Logo (white)', 'mod') ~ ' (100x55 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_m_white"
@@ -239,7 +227,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_l_black_input">
-                                                        {{ __('Large Logo (250x138 - PNG) (black)', 'mod') }}
+                                                        {{ __('Large Logo (black)', 'mod') ~ ' (250x138 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_l_black"
@@ -256,7 +244,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_l_grey_input">
-                                                        {{ __('Large Logo (250x138 - PNG) (grey)', 'mod') }}
+                                                        {{ __('Large Logo (grey)', 'mod') ~ ' (250x138 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_l_grey"
@@ -273,7 +261,7 @@
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
                                                            for="logo_l_white_input">
-                                                        {{ __('Large Logo (250x138 - PNG) (white)', 'mod') }}
+                                                        {{ __('Large Logo (white)', 'mod') ~ ' (250x138 - PNG)' }}
                                                     </label>
                                                     <div class="col-xxl-7  field-container">
                                                         <input type="file" class="form-control" name="logo_l_white"
@@ -290,7 +278,7 @@
                                             <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                 <label class="col-form-label col-xxl-5 text-xxl-end "
                                                        for="favicon_input">
-                                                    {{ __('Favicon (16x16 - ICO)', 'mod') }}
+                                                    {{ __('Favicon', 'mod') ~ ' (16x16 - ICO)' }}
                                                 </label>
                                                 <div class="col-xxl-7  field-container">
                                                     <input type="file" class="form-control" name="favicon"
@@ -317,19 +305,17 @@
                     </form>
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
-                            const checkbox = document.getElementById('use_theme_logos');
-                            const themeSection = document.getElementById('theme-logos-section');
-                            const defaultSection = document.getElementById('default-logos-section');
-                            if (!checkbox || !themeSection || !defaultSection) {
+                            debugger;
+                            const themeLogosSection = document.getElementById('theme-logos-section');
+                            const defaultLogosSection = document.getElementById('default-logos-section');
+                            if (!themeLogosSection || !defaultLogosSection) {
                                 return;
                             }
-                            const updateVisibility = () => {
-                                const enabled = checkbox.checked;
-                                themeSection.style.display = enabled ? '' : 'none';
-                                defaultSection.style.display = enabled ? 'none' : '';
-                            };
-                            checkbox.addEventListener('change', updateVisibility);
-                            updateVisibility();
+                            $("select[name='use_theme_logos']").on('select2:select', (event) => {
+                                const enabled = event.target.value === "1";
+                                themeLogosSection.style.display = enabled ? '' : 'none';
+                                defaultLogosSection.style.display = enabled ? 'none' : '';
+                            });
                         });
                     </script>
                 </div>

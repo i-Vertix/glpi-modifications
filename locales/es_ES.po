@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es_ES v1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-16 23:53+0200\n"
-"PO-Revision-Date: 2026-03-13 10:55+0200\n"
+"POT-Creation-Date: 2026-03-16 10:01+0100\n"
+"PO-Revision-Date: 2026-03-16 10:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: es_ES\n"
@@ -16,6 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: M365 Copilot\n"
 
 #: templates/uibranding.html.twig
 msgid "UI Branding"
@@ -38,6 +39,10 @@ msgid "Show custom logos"
 msgstr "Mostrar logotipos personalizados"
 
 #: templates/uibranding.html.twig
+msgid "Enable theme-based logo modifications"
+msgstr "Habilitar modificaciones de logotipos basadas en el tema"
+
+#: templates/uibranding.html.twig
 msgid "Show custom favicon"
 msgstr "Mostrar favicon personalizado"
 
@@ -46,101 +51,104 @@ msgid "Custom Images"
 msgstr "Imágenes personalizadas"
 
 #: templates/uibranding.html.twig
-msgid "Background (min. 1920x1080 - JPG)"
-msgstr "Fondo (mín. 1920x1080 - JPG)"
-
-#: templates/uibranding.html.twig
 msgid "Background"
 msgstr "Fondo"
-
-#: templates/uibranding.html.twig
-msgid "Small Logo (53x53 - PNG)"
-msgstr "Logotipo pequeño (53x53 - PNG)"
 
 #: templates/uibranding.html.twig
 msgid "Small Logo"
 msgstr "Logotipo pequeño"
 
 #: templates/uibranding.html.twig
-msgid "Medium Logo (100x55 - PNG)"
-msgstr "Logotipo mediano (100x55 - PNG)"
-
-#: templates/uibranding.html.twig
 msgid "Medium Logo"
 msgstr "Logotipo mediano"
-
-#: templates/uibranding.html.twig
-msgid "Large Logo (250x138 - PNG)"
-msgstr "Logotipo grande (250x138 - PNG)"
 
 #: templates/uibranding.html.twig
 msgid "Large Logo"
 msgstr "Logotipo grande"
 
 #: templates/uibranding.html.twig
-msgid "Favicon (16x16 - ICO)"
-msgstr "Favicon (16x16 - ICO)"
+msgid "Theme-based logos"
+msgstr "Logotipos basados en el tema"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (black)"
+msgstr "Logotipo pequeño (negro)"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (grey)"
+msgstr "Logotipo pequeño (gris)"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (white)"
+msgstr "Logotipo pequeño (blanco)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (black)"
+msgstr "Logotipo mediano (negro)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (grey)"
+msgstr "Logotipo mediano (gris)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (white)"
+msgstr "Logotipo mediano (blanco)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (black)"
+msgstr "Logotipo grande (negro)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (grey)"
+msgstr "Logotipo grande (gris)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (white)"
+msgstr "Logotipo grande (blanco)"
 
 #: templates/uibranding.html.twig
 msgid "Favicon"
 msgstr "Favicon"
 
-#: front/uibranding.php:51
+#: front/uibranding.php:49
 msgid "Please activate the plugin"
 msgstr "Por favor, activa el plugin"
 
-#: templates/uibranding.html.twig
-msgid "Enable theme-based logo modifications"
-msgstr "Habilitar modificaciones de logotipos basadas en tema"
+#: src/BrandManager.php:254
+msgid "Created plugin directories"
+msgstr "Directorios del plugin creados"
 
-#: templates/uibranding.html.twig
-msgid "Theme-based logos"
-msgstr "Logotipos basados en tema"
+#: src/BrandManager.php:286
+msgid "Installed image resources"
+msgstr "Recursos de imagen instalados"
 
-#: templates/uibranding.html.twig
-msgid "Black"
-msgstr "Negro"
+#: src/BrandManager.php:287
+msgid "Created backups"
+msgstr "Copias de seguridad creadas"
 
-#: templates/uibranding.html.twig
-msgid "Grey"
-msgstr "Gris"
+#: src/BrandManager.php:293
+msgid "Installed modifiers"
+msgstr "Modificadores instalados"
 
-#: templates/uibranding.html.twig
-msgid "White"
-msgstr "Blanco"
+#: src/BrandManager.php:306
+msgid "Restored backups"
+msgstr "Copias de seguridad restauradas"
 
-#: templates/uibranding.html.twig
-msgid "Small Logo (53x53 - PNG) (black)"
-msgstr "Logotipo pequeño (53x53 - PNG) (negro)"
+#: src/BrandManager.php:309
+msgid "Removed resources and backups"
+msgstr "Recursos y copias de seguridad eliminados"
 
-#: templates/uibranding.html.twig
-msgid "Small Logo (53x53 - PNG) (grey)"
-msgstr "Logotipo pequeño (53x53 - PNG) (gris)"
+#: src/BrandManager.php:455
+#, php-format
+msgid "Upload of file %s failed (file invalid)"
+msgstr "La carga del archivo %s ha fallado (archivo no válido)"
 
-#: templates/uibranding.html.twig
-msgid "Small Logo (53x53 - PNG) (white)"
-msgstr "Logotipo pequeño (53x53 - PNG) (blanco)"
+#: src/BrandManager.php:461 src/BrandManager.php:468
+#, php-format
+msgid "Uploaded file %s is invalid (only %s accepted)"
+msgstr "El archivo cargado %s no es válido (solo se acepta %s)"
 
-#: templates/uibranding.html.twig
-msgid "Medium Logo (100x55 - PNG) (black)"
-msgstr "Logotipo mediano (100x55 - PNG) (negro)"
-
-#: templates/uibranding.html.twig
-msgid "Medium Logo (100x55 - PNG) (grey)"
-msgstr "Logotipo mediano (100x55 - PNG) (gris)"
-
-#: templates/uibranding.html.twig
-msgid "Medium Logo (100x55 - PNG) (white)"
-msgstr "Logotipo mediano (100x55 - PNG) (blanco)"
-
-#: templates/uibranding.html.twig
-msgid "Large Logo (250x138 - PNG) (black)"
-msgstr "Logotipo grande (250x138 - PNG) (negro)"
-
-#: templates/uibranding.html.twig
-msgid "Large Logo (250x138 - PNG) (grey)"
-msgstr "Logotipo grande (250x138 - PNG) (gris)"
-
-#: templates/uibranding.html.twig
-msgid "Large Logo (250x138 - PNG) (white)"
-msgstr "Logotipo grande (250x138 - PNG) (blanco)"
+#: src/BrandManager.php:473
+#, php-format
+msgid "Upload of file %s failed"
+msgstr "La carga del archivo %s ha fallado"

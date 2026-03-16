@@ -46,10 +46,10 @@ class BrandManager
     public const IMAGES_DIR = self::FILES_DIR . "/images";
 
     private const MIME_MAP = [
-        'jpg'  => 'image/jpeg',
+        'jpg' => 'image/jpeg',
         'jpeg' => 'image/jpeg',
-        'png'  => 'image/png',
-        'ico'  => 'image/x-icon',
+        'png' => 'image/png',
+        'ico' => 'image/x-icon',
     ];
 
     /**
@@ -251,7 +251,7 @@ class BrandManager
             }
             $someDirCreated = true;
         }
-        if ($someDirCreated) Session::addMessageAfterRedirect(__("✅ Created plugin directories", "mod"));
+        if ($someDirCreated) Session::addMessageAfterRedirect("✅ " . __("Created plugin directories", "mod"));
 
         // handle default images
         $someResourceInstalled = false;
@@ -283,14 +283,14 @@ class BrandManager
                 }
             }
         }
-        if ($someResourceInstalled) Session::addMessageAfterRedirect(__("✅ Installed image resources", "mod"));
-        if ($someBackupCreated) Session::addMessageAfterRedirect(__("✅ Created backups", "mod"));
+        if ($someResourceInstalled) Session::addMessageAfterRedirect("✅ " . __("Installed image resources", "mod"));
+        if ($someBackupCreated) Session::addMessageAfterRedirect("✅ " . __("Created backups", "mod"));
 
         if (!file_exists(self::FILES_DIR . "/modifiers.ini")) {
             if (!self::initModifiers()) {
                 die("Unable to install modifiers");
             }
-            Session::addMessageAfterRedirect(__("✅ Installed modifiers", "mod"));
+            Session::addMessageAfterRedirect("✅ " . __("Installed modifiers", "mod"));
         }
     }
 
@@ -303,10 +303,10 @@ class BrandManager
             $this->restoreResource($resourceName);
         }
         $this->disableLoginPageModifier();
-        Session::addMessageAfterRedirect(__("♻️ Restored backups", "mod"));
+        Session::addMessageAfterRedirect("♻️ " . __("Restored backups", "mod"));
         // delete files
         Toolbox::deleteDir(self::FILES_DIR);
-        Session::addMessageAfterRedirect(__("🗑️ Removed resources and backups", "mod"));
+        Session::addMessageAfterRedirect("🗑️ " . __("Removed resources and backups", "mod"));
     }
 
     /**
@@ -419,11 +419,15 @@ class BrandManager
         $imageResources = self::getImageResources();
         if (!isset($imageResources[$resourceName]["active"])) return;
 
-        // Make sure the current resource exists (especially for newly introduced resources)
-        if (!file_exists($imageResources[$resourceName]["current"]) && isset($imageResources[$resourceName]["default"])) {
-            if (file_exists($imageResources[$resourceName]["default"])) {
-                copy($imageResources[$resourceName]["default"], $imageResources[$resourceName]["current"]);
-            }
+        // Check if the "current" resource exists
+        // in case copy the default image as "current" resource
+        // this check is also important after the upgrade to 11.0.5 introducing theme-related logos
+        if (
+            isset($imageResources[$resourceName]["default"]) &&
+            !file_exists($imageResources[$resourceName]["current"]) &&
+            file_exists($imageResources[$resourceName]["default"])
+        ) {
+            copy($imageResources[$resourceName]["default"], $imageResources[$resourceName]["current"]);
         }
 
         if (is_array($imageResources[$resourceName]["active"])) {
@@ -597,25 +601,24 @@ class BrandManager
      * This is useful to support theme-specific logo resources in addition to the
      * generic logo paths.
      *
-     * @param bool $includeTheme If true, check theme-specific logo variants as well.
      * @return bool Returns true if any logo resource is modified; otherwise false.
      */
-    public static function isAnyLogoModified(bool $includeTheme = true): bool
+    public static function isAnyLogoModified(): bool
     {
-        $resources = ["logo_s", "logo_m", "logo_l"];
-        if ($includeTheme) {
-            $resources = array_merge($resources, [
-                "logo_s_black",
-                "logo_s_grey",
-                "logo_s_white",
-                "logo_m_black",
-                "logo_m_grey",
-                "logo_m_white",
-                "logo_l_black",
-                "logo_l_grey",
-                "logo_l_white",
-            ]);
-        }
+        $resources = [
+            "logo_s",
+            "logo_m",
+            "logo_l",
+            "logo_s_black",
+            "logo_s_grey",
+            "logo_s_white",
+            "logo_m_black",
+            "logo_m_grey",
+            "logo_m_white",
+            "logo_l_black",
+            "logo_l_grey",
+            "logo_l_white",
+        ];
         foreach ($resources as $resource) {
             if (self::isActiveResourceModified($resource)) {
                 return true;

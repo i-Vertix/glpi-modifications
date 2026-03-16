@@ -48,12 +48,10 @@ class UIBranding
     {
         $brandManager = new BrandManager();
         $backgroundChanged = false;
-        $logosChanged = false;
         $faviconChanged = false;
 
-        // Theme specific logo variants (black/grey/white)
-        $useThemeLogos = isset($data['use_theme_logos']) && $data['use_theme_logos'] === '1';
-        $brandManager->setThemeLogosEnabled($useThemeLogos);
+        $useThemeLogos = isset($data['use_theme_logos']) ? $data['use_theme_logos'] === '1' : BrandManager::isThemeLogosEnabled();
+        $logosChanged = BrandManager::isThemeLogosEnabled() !== $useThemeLogos;
 
         $themeLogoResources = [
             'logo_s_black',
@@ -107,6 +105,7 @@ class UIBranding
             $brandManager->applyResource("background");
         }
 
+        $brandManager->setThemeLogosEnabled($useThemeLogos);
         if (isset($data['show_custom_logos'])) {
             if ($data['show_custom_logos'] === '1') {
                 // overwrite logos if changed or if custom logos are not yet applied
@@ -115,10 +114,12 @@ class UIBranding
                 if ($useThemeLogos) {
                     $resourcesToCheck = array_merge($resourcesToCheck, $themeLogoResources);
                 }
-                foreach ($resourcesToCheck as $resource) {
-                    if (!$brandManager::isActiveResourceModified($resource)) {
-                        $needsApply = true;
-                        break;
+                if (!$needsApply) {
+                    foreach ($resourcesToCheck as $resource) {
+                        if (!$brandManager::isActiveResourceModified($resource)) {
+                            $needsApply = true;
+                            break;
+                        }
                     }
                 }
 
@@ -135,13 +136,10 @@ class UIBranding
                         }
                     }
                 }
-            } else if (BrandManager::isAnyLogoModified(true)) {
+            } else if (BrandManager::isAnyLogoModified()) {
                 $brandManager->restoreResource("logo_s");
                 $brandManager->restoreResource("logo_m");
                 $brandManager->restoreResource("logo_l");
-                foreach ($themeLogoResources as $resourceName) {
-                    $brandManager->restoreResource($resourceName);
-                }
             }
         } else if ($logosChanged) {
             if (!$useThemeLogos) {
@@ -183,7 +181,7 @@ class UIBranding
             "url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/uibranding.php",
             "preview_url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/resource.send.php",
             "show_background" => BrandManager::isLoginPageModified(),
-            "show_custom_logos" => BrandManager::isAnyLogoModified(true),
+            "show_custom_logos" => BrandManager::isAnyLogoModified(),
             "use_theme_logos" => BrandManager::isThemeLogosEnabled(),
             "show_custom_favicon" => BrandManager::isActiveResourceModified("favicon"),
             "title" => BrandManager::getCurrentTitle(),
