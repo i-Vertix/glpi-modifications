@@ -9,9 +9,9 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-16 23:53+0200\n"
-"PO-Revision-Date: 2025-10-16 23:54+0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"PO-Revision-Date: 2026-03-13 10:55+0200\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -89,3 +89,59 @@ msgstr "Favicon"
 #: front/uibranding.php:51
 msgid "Please activate the plugin"
 msgstr "Per favore attivare il plugin"
+
+#: templates/uibranding.html.twig
+msgid "Enable theme-based logo modifications"
+msgstr "Abilita modifiche logo basate su tema"
+
+#: templates/uibranding.html.twig
+msgid "Theme-based logos"
+msgstr "Loghi basati su tema"
+
+#: templates/uibranding.html.twig
+msgid "Black"
+msgstr "Nero"
+
+#: templates/uibranding.html.twig
+msgid "Grey"
+msgstr "Grigio"
+
+#: templates/uibranding.html.twig
+msgid "White"
+msgstr "Bianco"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (black)"
+msgstr "Carica logo piccolo (53x53 - PNG) (nero)"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (grey)"
+msgstr "Carica logo piccolo (53x53 - PNG) (grigio)"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (white)"
+msgstr "Carica logo piccolo (53x53 - PNG) (bianco)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (black)"
+msgstr "Carica logo medio (100x55 - PNG) (nero)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (grey)"
+msgstr "Carica logo medio (100x55 - PNG) (grigio)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (white)"
+msgstr "Carica logo medio (100x55 - PNG) (bianco)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (black)"
+msgstr "Carica logo grande (250x138 - PNG) (nero)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (grey)"
+msgstr "Carica logo grande (250x138 - PNG) (grigio)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (white)"
+msgstr "Carica logo grande (250x138 - PNG) (bianco)"

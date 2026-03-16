@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-10-16 23:53+0200\n"
-"PO-Revision-Date: 2025-10-16 23:53+0200\n"
+"PO-Revision-Date: 2026-03-13 10:55+0200\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
 "Language: en_GB\n"
@@ -88,3 +88,59 @@ msgstr "Favicon"
 #: front/uibranding.php:51
 msgid "Please activate the plugin"
 msgstr "Please activate the plugin"
+
+#: templates/uibranding.html.twig
+msgid "Enable theme-based logo modifications"
+msgstr "Enable theme-based logo modifications"
+
+#: templates/uibranding.html.twig
+msgid "Theme-based logos"
+msgstr "Theme-based logos"
+
+#: templates/uibranding.html.twig
+msgid "Black"
+msgstr "Black"
+
+#: templates/uibranding.html.twig
+msgid "Grey"
+msgstr "Grey"
+
+#: templates/uibranding.html.twig
+msgid "White"
+msgstr "White"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (black)"
+msgstr "Small Logo (53x53 - PNG) (black)"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (grey)"
+msgstr "Small Logo (53x53 - PNG) (grey)"
+
+#: templates/uibranding.html.twig
+msgid "Small Logo (53x53 - PNG) (white)"
+msgstr "Small Logo (53x53 - PNG) (white)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (black)"
+msgstr "Medium Logo (100x55 - PNG) (black)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (grey)"
+msgstr "Medium Logo (100x55 - PNG) (grey)"
+
+#: templates/uibranding.html.twig
+msgid "Medium Logo (100x55 - PNG) (white)"
+msgstr "Medium Logo (100x55 - PNG) (white)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (black)"
+msgstr "Large Logo (250x138 - PNG) (black)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (grey)"
+msgstr "Large Logo (250x138 - PNG) (grey)"
+
+#: templates/uibranding.html.twig
+msgid "Large Logo (250x138 - PNG) (white)"
+msgstr "Large Logo (250x138 - PNG) (white)"
