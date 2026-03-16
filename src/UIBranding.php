@@ -80,11 +80,11 @@ class UIBranding
             if (isset($files['logo_l']['name']) && $files['logo_l']['name'] !== '') {
                 $logosChanged = $brandManager->uploadResource("logo_l", $files['logo_l']);
             }
-        }
-
-        foreach ($themeLogoResources as $resourceName) {
-            if (isset($files[$resourceName]['name']) && $files[$resourceName]['name'] !== '') {
-                $logosChanged = $brandManager->uploadResource($resourceName, $files[$resourceName]) || $logosChanged;
+        } else {
+            foreach ($themeLogoResources as $resourceName) {
+                if (isset($files[$resourceName]['name']) && $files[$resourceName]['name'] !== '') {
+                    $logosChanged = $brandManager->uploadResource($resourceName, $files[$resourceName]) || $logosChanged;
+                }
             }
         }
 
@@ -124,16 +124,16 @@ class UIBranding
 
                 if ($needsApply) {
                     if (!$useThemeLogos) {
-                    // apply base logos
-                    $brandManager->applyResource("logo_s");
-                    $brandManager->applyResource("logo_m");
-                    $brandManager->applyResource("logo_l");
-                } else {
-                    // apply only theme variants
-                    foreach ($themeLogoResources as $resourceName) {
-                        $brandManager->applyResource($resourceName);
+                        // apply base logos
+                        $brandManager->applyResource("logo_s");
+                        $brandManager->applyResource("logo_m");
+                        $brandManager->applyResource("logo_l");
+                    } else {
+                        // apply only theme variants
+                        foreach ($themeLogoResources as $resourceName) {
+                            $brandManager->applyResource($resourceName);
+                        }
                     }
-                }
                 }
             } else if (BrandManager::isAnyLogoModified(true)) {
                 $brandManager->restoreResource("logo_s");

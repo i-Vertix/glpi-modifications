@@ -48,12 +48,15 @@
                                             {{ fields.dropdownYesNo('show_background', show_background, __('Show login background', 'mod')) }}
                                             {{ fields.dropdownYesNo('show_custom_logos', show_custom_logos, __('Show custom logos', 'mod')) }}
                                             <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
-                                                <label class="col-form-label col-xxl-5 text-xxl-end " for="use_theme_logos">
+                                                <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                       for="use_theme_logos">
                                                     {{ __('Enable theme-based logo modifications', 'mod') }}
                                                 </label>
                                                 <div class="col-xxl-7  field-container">
                                                     <div class="form-check">
-                                                        <input class="form-check-input" type="checkbox" id="use_theme_logos" name="use_theme_logos" value="1" {% if use_theme_logos %}checked{% endif %} />
+                                                        <input class="form-check-input" type="checkbox"
+                                                               id="use_theme_logos" name="use_theme_logos" value="1"
+                                                               {% if use_theme_logos %}checked{% endif %} />
                                                     </div>
                                                 </div>
                                             </div>
@@ -74,7 +77,8 @@
                                                      src='{{ preview_url }}?resource=background'
                                                      alt='{{ __('Background', 'mod') }}'/>
                                             </div>
-                                            <div id="default-logos-section" style="{{ use_theme_logos ? 'display:none;' : '' }}">
+                                            <div id="default-logos-section"
+                                                 style="{{ use_theme_logos ? 'display:none;' : '' }}">
                                                 <div class="row border-top mb-2 ms-2 me-2"></div>
                                                 <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                     <label class="col-form-label col-xxl-5 text-xxl-end "
@@ -125,7 +129,8 @@
                                                 </div>
                                             </div>
 
-                                            <div id="theme-logos-section" style="{{ use_theme_logos ? '' : 'display:none;' }}">
+                                            <div id="theme-logos-section"
+                                                 style="{{ use_theme_logos ? '' : 'display:none;' }}">
                                                 <div class="row border-top mb-2 ms-2 me-2"></div>
                                                 {{ fields.smallTitle(__('Theme-based logos', 'mod'), 'ti ti-palette') }}
 
