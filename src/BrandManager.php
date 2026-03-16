@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with "UI Branding plugin for GLPI". If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
- * @copyright Copyright (C) 2026 by i-Vertix/PGUM.
+ * @copyright Copyright (C) 2025 by i-Vertix/PGUM.
  * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
  * @link      https://github.com/i-Vertix/glpi-modifications
  * -------------------------------------------------------------------------
@@ -46,10 +46,10 @@ class BrandManager
     public const IMAGES_DIR = self::FILES_DIR . "/images";
 
     private const MIME_MAP = [
-        'jpg' => 'image/jpeg',
-        'jpeg' => 'image/jpeg',
-        'png' => 'image/png',
-        'ico' => 'image/x-icon',
+        'jpg' => ['image/jpeg'],
+        'jpeg' => ['image/jpeg'],
+        'png' => ['image/png'],
+        'ico' => ['image/x-icon', 'image/vnd.microsoft.icon'],
     ];
 
     /**
@@ -467,8 +467,8 @@ class BrandManager
         }
 
         $realMime = Toolbox::getMime($file["tmp_name"]);
-        $expectedMime = self::MIME_MAP[$extension] ?? null;
-        if ($expectedMime === null || $realMime !== $expectedMime) {
+        $expectedMimes = self::MIME_MAP[$extension] ?? null;
+        if ($expectedMimes === null || !in_array($realMime, $expectedMimes, true)) {
             Session::addMessageAfterRedirect(sprintf("❌ " . __("Uploaded file %s is invalid (only %s accepted)", "mod"), $file["name"], implode(", ", $imageResources[$resourceName]["accept"])));
             return false;
         }
