@@ -45,6 +45,13 @@ class BrandManager
     public const BACKUP_DIR = self::FILES_DIR . "/backups";
     public const IMAGES_DIR = self::FILES_DIR . "/images";
 
+    private const MIME_MAP = [
+        'jpg' => ['image/jpeg'],
+        'jpeg' => ['image/jpeg'],
+        'png' => ['image/png'],
+        'ico' => ['image/x-icon', 'image/vnd.microsoft.icon'],
+    ];
+
     /**
      * Retrieves the directory path for resources within the 'mod' plugin.
      *
@@ -109,6 +116,27 @@ class BrandManager
                 ],
                 "accept" => ["png"]
             ],
+            "logo_s_black" => [
+                "default" => self::getResourceDir() . "/images/logo-G-100.png",
+                "current" => self::IMAGES_DIR . "/logo-G-100-black.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-G-100-black.png",
+                "backup" => self::BACKUP_DIR . "/logo-G-100-black.png",
+                "accept" => ["png"]
+            ],
+            "logo_s_grey" => [
+                "default" => self::getResourceDir() . "/images/logo-G-100.png",
+                "current" => self::IMAGES_DIR . "/logo-G-100-grey.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-G-100-grey.png",
+                "backup" => self::BACKUP_DIR . "/logo-G-100-grey.png",
+                "accept" => ["png"]
+            ],
+            "logo_s_white" => [
+                "default" => self::getResourceDir() . "/images/logo-G-100.png",
+                "current" => self::IMAGES_DIR . "/logo-G-100-white.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-G-100-white.png",
+                "backup" => self::BACKUP_DIR . "/logo-G-100-white.png",
+                "accept" => ["png"]
+            ],
             "logo_m" => [
                 "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
                 "current" => self::IMAGES_DIR . "/logo-GLPI-100.png",
@@ -124,6 +152,27 @@ class BrandManager
                 ],
                 "accept" => ["png"]
             ],
+            "logo_m_black" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-100-black.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-black.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-100-black.png",
+                "accept" => ["png"]
+            ],
+            "logo_m_grey" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-100-grey.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-grey.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-100-grey.png",
+                "accept" => ["png"]
+            ],
+            "logo_m_white" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-100-white.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-white.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-100-white.png",
+                "accept" => ["png"]
+            ],
             "logo_l" => [
                 "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
                 "current" => self::IMAGES_DIR . "/logo-GLPI-250.png",
@@ -137,6 +186,27 @@ class BrandManager
                     self::BACKUP_DIR . "/logo-GLPI-250-grey.png",
                     self::BACKUP_DIR . "/logo-GLPI-250-white.png",
                 ],
+                "accept" => ["png"]
+            ],
+            "logo_l_black" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-250-black.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-black.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-250-black.png",
+                "accept" => ["png"]
+            ],
+            "logo_l_grey" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-250-grey.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-grey.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-250-grey.png",
+                "accept" => ["png"]
+            ],
+            "logo_l_white" => [
+                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
+                "current" => self::IMAGES_DIR . "/logo-GLPI-250-white.png",
+                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-white.png",
+                "backup" => self::BACKUP_DIR . "/logo-GLPI-250-white.png",
                 "accept" => ["png"]
             ],
         ];
@@ -181,7 +251,7 @@ class BrandManager
             }
             $someDirCreated = true;
         }
-        if ($someDirCreated) Session::addMessageAfterRedirect("✅ Created plugin directories");
+        if ($someDirCreated) Session::addMessageAfterRedirect("✅ " . __("Created plugin directories", "mod"));
 
         // handle default images
         $someResourceInstalled = false;
@@ -213,14 +283,14 @@ class BrandManager
                 }
             }
         }
-        if ($someResourceInstalled) Session::addMessageAfterRedirect("✅ Installed image resources");
-        if ($someBackupCreated) Session::addMessageAfterRedirect("✅ Created backups");
+        if ($someResourceInstalled) Session::addMessageAfterRedirect("✅ " . __("Installed image resources", "mod"));
+        if ($someBackupCreated) Session::addMessageAfterRedirect("✅ " . __("Created backups", "mod"));
 
         if (!file_exists(self::FILES_DIR . "/modifiers.ini")) {
             if (!self::initModifiers()) {
                 die("Unable to install modifiers");
             }
-            Session::addMessageAfterRedirect("✅ Installed modifiers");
+            Session::addMessageAfterRedirect("✅ " . __("Installed modifiers", "mod"));
         }
     }
 
@@ -233,10 +303,10 @@ class BrandManager
             $this->restoreResource($resourceName);
         }
         $this->disableLoginPageModifier();
-        Session::addMessageAfterRedirect("♻️ Restored backups");
+        Session::addMessageAfterRedirect("♻️ " . __("Restored backups", "mod"));
         // delete files
         Toolbox::deleteDir(self::FILES_DIR);
-        Session::addMessageAfterRedirect("🗑️ Removed resources and backups");
+        Session::addMessageAfterRedirect("🗑️ " . __("Removed resources and backups", "mod"));
     }
 
     /**
@@ -348,6 +418,18 @@ class BrandManager
     {
         $imageResources = self::getImageResources();
         if (!isset($imageResources[$resourceName]["active"])) return;
+
+        // Check if the "current" resource exists
+        // in case copy the default image as "current" resource
+        // this check is also important after the upgrade to 11.0.5 introducing theme-related logos
+        if (
+            isset($imageResources[$resourceName]["default"]) &&
+            !file_exists($imageResources[$resourceName]["current"]) &&
+            file_exists($imageResources[$resourceName]["default"])
+        ) {
+            copy($imageResources[$resourceName]["default"], $imageResources[$resourceName]["current"]);
+        }
+
         if (is_array($imageResources[$resourceName]["active"])) {
             foreach ($imageResources[$resourceName]["active"] as $activeFile) {
                 copy($imageResources[$resourceName]["current"], $activeFile);
@@ -374,17 +456,25 @@ class BrandManager
         if (!isset($imageResources[$resourceName])) return false;
         if (!isset($file["tmp_name"])) return false;
         if (isset($file["error"]) && $file["error"] !== UPLOAD_ERR_OK) {
-            Session::addMessageAfterRedirect(sprintf("❌ Upload of file %s failed (file invalid)", $file["name"]));
+            Session::addMessageAfterRedirect(sprintf("❌ " . __("Upload of file %s failed (file invalid)", "mod"), $file["name"]));
             return false;
         }
 
-        $extension = pathinfo($file["name"], PATHINFO_EXTENSION);
+        $extension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
         if (!in_array($extension, $imageResources[$resourceName]["accept"], true)) {
-            Session::addMessageAfterRedirect(sprintf("❌ Uploaded file %s is invalid (only %s accepted)", $file["name"], implode(", ", $imageResources[$resourceName]["accept"])));
+            Session::addMessageAfterRedirect(sprintf("❌ " . __("Uploaded file %s is invalid (only %s accepted)", "mod"), $file["name"], implode(", ", $imageResources[$resourceName]["accept"])));
             return false;
         }
+
+        $realMime = Toolbox::getMime($file["tmp_name"]);
+        $expectedMimes = self::MIME_MAP[$extension] ?? null;
+        if ($expectedMimes === null || !in_array($realMime, $expectedMimes, true)) {
+            Session::addMessageAfterRedirect(sprintf("❌ " . __("Uploaded file %s is invalid (only %s accepted)", "mod"), $file["name"], implode(", ", $imageResources[$resourceName]["accept"])));
+            return false;
+        }
+
         if (!move_uploaded_file($file["tmp_name"], $imageResources[$resourceName]["current"])) {
-            Session::addMessageAfterRedirect(sprintf("❌ Upload of file %s failed", $file["name"]));
+            Session::addMessageAfterRedirect(sprintf("❌ " . __("Upload of file %s failed", "mod"), $file["name"]));
             return false;
         }
         return true;
@@ -410,10 +500,11 @@ class BrandManager
             /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
             $ini = ["title" => "GLPI", "login" => "false"];
         }
-        $ini["title"] = htmlescape($title);
+        $ini["title"] = strip_tags(trim($title));
         $iniString = [];
         foreach ($ini as $key => $value) {
-            $iniString[] = "$key=$value";
+            $safeValue = str_replace(['"', "\n", "\r"], ['\\"', '', ''], (string)$value);
+            $iniString[] = "$key=\"$safeValue\"";
         }
         file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
     }
@@ -432,12 +523,12 @@ class BrandManager
             return "GLPI";
         }
         $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
-        if ($ini === false) return false;
+        if ($ini === false) return "GLPI";   // ← safe fallback
         if (!isset($ini["title"])) {
             self::initModifiers();
             return "GLPI";
         }
-        return $ini["title"];
+        return (string)$ini["title"];
     }
 
     /**
@@ -460,6 +551,83 @@ class BrandManager
     }
 
     /**
+     * Returns whether theme-specific logo modification is enabled.
+     *
+     * @return bool
+     */
+    public static function isThemeLogosEnabled(): bool
+    {
+        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
+            return false;
+        }
+        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
+        if ($ini === false) {
+            return false;
+        }
+        if (!isset($ini["theme_logos"])) {
+            self::initModifiers();
+            return false;
+        }
+        return $ini["theme_logos"] === "1";
+    }
+
+    /**
+     * Enables/disables theme-specific logo modification.
+     *
+     * @param bool $enabled
+     * @return void
+     */
+    public function setThemeLogosEnabled(bool $enabled): void
+    {
+        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
+            return;
+        }
+        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
+        if ($ini === false) {
+            /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
+            $ini = ["title" => "GLPI", "login" => "0", "theme_logos" => "0"];
+        }
+        $ini["theme_logos"] = $enabled ? "1" : "0";
+        $iniString = [];
+        foreach ($ini as $key => $value) {
+            $iniString[] = "$key=$value";
+        }
+        file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
+    }
+
+    /**
+     * Checks whether any logo resource is currently in a modified state.
+     *
+     * This is useful to support theme-specific logo resources in addition to the
+     * generic logo paths.
+     *
+     * @return bool Returns true if any logo resource is modified; otherwise false.
+     */
+    public static function isAnyLogoModified(): bool
+    {
+        $resources = [
+            "logo_s",
+            "logo_m",
+            "logo_l",
+            "logo_s_black",
+            "logo_s_grey",
+            "logo_s_white",
+            "logo_m_black",
+            "logo_m_grey",
+            "logo_m_white",
+            "logo_l_black",
+            "logo_l_grey",
+            "logo_l_white",
+        ];
+        foreach ($resources as $resource) {
+            if (self::isActiveResourceModified($resource)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Applies modifications to the login page by updating the modifiers.ini file.
      * If the file does not exist or cannot be parsed, it initializes the configuration
      * with default values and flags the login page as modified.
@@ -479,7 +647,8 @@ class BrandManager
         $ini["login"] = "1";
         $iniString = [];
         foreach ($ini as $key => $value) {
-            $iniString[] = "$key=$value";
+            $safeValue = str_replace(['"', "\n", "\r"], ['\\"', '', ''], (string)$value);
+            $iniString[] = "$key=\"$safeValue\"";
         }
         file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
     }
@@ -502,7 +671,8 @@ class BrandManager
         $ini["login"] = "0";
         $iniString = [];
         foreach ($ini as $key => $value) {
-            $iniString[] = "$key=$value";
+            $safeValue = str_replace(['"', "\n", "\r"], ['\\"', '', ''], (string)$value);
+            $iniString[] = "$key=\"$safeValue\"";
         }
         file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
     }

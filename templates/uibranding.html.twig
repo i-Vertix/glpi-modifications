@@ -20,7 +20,7 @@
 # You should have received a copy of the GNU General Public License
 # along with "UI Branding plugin for GLPI". If not, see <http://www.gnu.org/licenses/>.
 # -------------------------------------------------------------------------
-# @copyright Copyright (C) 2025 by i-Vertix/PGUM.
+# @copyright Copyright (C) 2026 by i-Vertix/PGUM.
 # @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
 # @link      https://github.com/i-Vertix/glpi-modifications
 # -------------------------------------------------------------------------
@@ -47,12 +47,13 @@
                                             {{ fields.textField('title', title, __('Page Title', 'mod')) }}
                                             {{ fields.dropdownYesNo('show_background', show_background, __('Show login background', 'mod')) }}
                                             {{ fields.dropdownYesNo('show_custom_logos', show_custom_logos, __('Show custom logos', 'mod')) }}
+                                            {{ fields.dropdownYesNo('use_theme_logos', use_theme_logos, __('Enable theme-based logo modifications', 'mod')) }}
                                             {{ fields.dropdownYesNo('show_custom_favicon', show_custom_favicon, __('Show custom favicon', 'mod')) }}
                                             {{ fields.smallTitle(__('Custom Images', 'mod'), 'ti ti-photo') }}
                                             <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                 <label class="col-form-label col-xxl-5 text-xxl-end "
                                                        for="background_input">
-                                                    {{ __('Background (min. 1920x1080 - JPG)', 'mod') }}
+                                                    {{ __('Background', 'mod') ~ ' (min. 1920x1080 - JPG)' }}
                                                 </label>
                                                 <div class="col-xxl-7  field-container">
                                                     <input type="file" class="form-control" name="background"
@@ -64,59 +65,220 @@
                                                      src='{{ preview_url }}?resource=background'
                                                      alt='{{ __('Background', 'mod') }}'/>
                                             </div>
-                                            <div class="row border-top mb-2 ms-2 me-2"></div>
-                                            <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
-                                                <label class="col-form-label col-xxl-5 text-xxl-end "
-                                                       for="logo_s_input">
-                                                    {{ __('Small Logo (53x53 - PNG)', 'mod') }}
-                                                </label>
-                                                <div class="col-xxl-7  field-container">
-                                                    <input type="file" class="form-control" name="logo_s"
-                                                           accept="image/png" id="logo_s_input"/>
+                                            <div id="default-logos-section"
+                                                 style="{{ use_theme_logos ? 'display:none;' : '' }}">
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_s_input">
+                                                        {{ __('Small Logo', 'mod') ~ ' (53x53 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_s"
+                                                               accept="image/png" id="logo_s_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_s'
+                                                         alt='{{ __('Small Logo', 'mod') }}'/>
+                                                </div>
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_m_input">
+                                                        {{ __('Medium Logo', 'mod') ~ ' (100x55 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_m"
+                                                               accept="image/png" id="logo_m_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_m'
+                                                         alt='{{ __('Medium Logo', 'mod') }}'/>
+                                                </div>
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_l_input">
+                                                        {{ __('Large Logo', 'mod') ~ ' (250x138 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_l"
+                                                               accept="image/png" id="logo_l_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_l'
+                                                         alt='{{ __('Large Logo', 'mod') }}'/>
                                                 </div>
                                             </div>
-                                            <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
-                                                <img style='max-width: 100%; max-height: 250px; width: auto'
-                                                     src='{{ preview_url }}?resource=logo_s'
-                                                     alt='{{ __('Small Logo', 'mod') }}'/>
-                                            </div>
-                                            <div class="row border-top mb-2 ms-2 me-2"></div>
-                                            <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
-                                                <label class="col-form-label col-xxl-5 text-xxl-end "
-                                                       for="logo_m_input">
-                                                    {{ __('Medium Logo (100x55 - PNG)', 'mod') }}
-                                                </label>
-                                                <div class="col-xxl-7  field-container">
-                                                    <input type="file" class="form-control" name="logo_m"
-                                                           accept="image/png" id="logo_m_input"/>
+
+                                            <div id="theme-logos-section"
+                                                 style="{{ use_theme_logos ? '' : 'display:none;' }}">
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                {{ fields.smallTitle(__('Theme-based logos', 'mod'), 'ti ti-palette') }}
+
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_s_black_input">
+                                                        {{ __('Small Logo (black)', 'mod') ~ ' (53x53 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_s_black"
+                                                               accept="image/png" id="logo_s_black_input"/>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
-                                                <img style='max-width: 100%; max-height: 250px; width: auto'
-                                                     src='{{ preview_url }}?resource=logo_m'
-                                                     alt='{{ __('Medium Logo', 'mod') }}'/>
-                                            </div>
-                                            <div class="row border-top mb-2 ms-2 me-2"></div>
-                                            <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
-                                                <label class="col-form-label col-xxl-5 text-xxl-end "
-                                                       for="logo_l_input">
-                                                    {{ __('Large Logo (250x138 - PNG)', 'mod') }}
-                                                </label>
-                                                <div class="col-xxl-7  field-container">
-                                                    <input type="file" class="form-control" name="logo_l"
-                                                           accept="image/png" id="logo_l_input"/>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_s_black'
+                                                         alt='{{ __('Small Logo (black)', 'mod') }}'/>
                                                 </div>
-                                            </div>
-                                            <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
-                                                <img style='max-width: 100%; max-height: 250px; width: auto'
-                                                     src='{{ preview_url }}?resource=logo_l'
-                                                     alt='{{ __('Large Logo', 'mod') }}'/>
+
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_s_grey_input">
+                                                        {{ __('Small Logo (grey)', 'mod') ~ ' (53x53 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_s_grey"
+                                                               accept="image/png" id="logo_s_grey_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_s_grey'
+                                                         alt='{{ __('Small Logo (grey)', 'mod') }}'/>
+                                                </div>
+
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_s_white_input">
+                                                        {{ __('Small Logo (white)', 'mod') ~ ' (53x53 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_s_white"
+                                                               accept="image/png" id="logo_s_white_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_s_white'
+                                                         alt='{{ __('Small Logo (white)', 'mod') }}'/>
+                                                </div>
+
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_m_black_input">
+                                                        {{ __('Medium Logo (black)', 'mod') ~ ' (100x55 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_m_black"
+                                                               accept="image/png" id="logo_m_black_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_m_black'
+                                                         alt='{{ __('Medium Logo (black)', 'mod') }}'/>
+                                                </div>
+
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_m_grey_input">
+                                                        {{ __('Medium Logo (grey)', 'mod') ~ ' (100x55 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_m_grey"
+                                                               accept="image/png" id="logo_m_grey_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_m_grey'
+                                                         alt='{{ __('Medium Logo (grey)', 'mod') }}'/>
+                                                </div>
+
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_m_white_input">
+                                                        {{ __('Medium Logo (white)', 'mod') ~ ' (100x55 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_m_white"
+                                                               accept="image/png" id="logo_m_white_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_m_white'
+                                                         alt='{{ __('Medium Logo (white)', 'mod') }}'/>
+                                                </div>
+
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_l_black_input">
+                                                        {{ __('Large Logo (black)', 'mod') ~ ' (250x138 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_l_black"
+                                                               accept="image/png" id="logo_l_black_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_l_black'
+                                                         alt='{{ __('Large Logo (black)', 'mod') }}'/>
+                                                </div>
+
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_l_grey_input">
+                                                        {{ __('Large Logo (grey)', 'mod') ~ ' (250x138 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_l_grey"
+                                                               accept="image/png" id="logo_l_grey_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_l_grey'
+                                                         alt='{{ __('Large Logo (grey)', 'mod') }}'/>
+                                                </div>
+
+                                                <div class="row border-top mb-2 ms-2 me-2"></div>
+                                                <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
+                                                    <label class="col-form-label col-xxl-5 text-xxl-end "
+                                                           for="logo_l_white_input">
+                                                        {{ __('Large Logo (white)', 'mod') ~ ' (250x138 - PNG)' }}
+                                                    </label>
+                                                    <div class="col-xxl-7  field-container">
+                                                        <input type="file" class="form-control" name="logo_l_white"
+                                                               accept="image/png" id="logo_l_white_input"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center justify-content-center col-12 col-sm-6 mb-2">
+                                                    <img style='max-width: 100%; max-height: 250px; width: auto'
+                                                         src='{{ preview_url }}?resource=logo_l_white'
+                                                         alt='{{ __('Large Logo (white)', 'mod') }}'/>
+                                                </div>
                                             </div>
                                             <div class="row border-top mb-2 ms-2 me-2"></div>
                                             <div class="form-field row align-items-center col-12 col-sm-6  mb-2">
                                                 <label class="col-form-label col-xxl-5 text-xxl-end "
                                                        for="favicon_input">
-                                                    {{ __('Favicon (16x16 - ICO)', 'mod') }}
+                                                    {{ __('Favicon', 'mod') ~ ' (16x16 - ICO)' }}
                                                 </label>
                                                 <div class="col-xxl-7  field-container">
                                                     <input type="file" class="form-control" name="favicon"
@@ -141,6 +303,21 @@
                         </div>
                         <div class="card-footer mx-n2 mb-n2"></div>
                     </form>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            debugger;
+                            const themeLogosSection = document.getElementById('theme-logos-section');
+                            const defaultLogosSection = document.getElementById('default-logos-section');
+                            if (!themeLogosSection || !defaultLogosSection) {
+                                return;
+                            }
+                            $("select[name='use_theme_logos']").on('select2:select', (event) => {
+                                const enabled = event.target.value === "1";
+                                themeLogosSection.style.display = enabled ? '' : 'none';
+                                defaultLogosSection.style.display = enabled ? 'none' : '';
+                            });
+                        });
+                    </script>
                 </div>
             </div>
         </div>

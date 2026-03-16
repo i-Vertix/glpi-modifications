@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with "UI Branding plugin for GLPI". If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
- * @copyright Copyright (C) 2025 by i-Vertix/PGUM.
+ * @copyright Copyright (C) 2026 by i-Vertix/PGUM.
  * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
  * @link      https://github.com/i-Vertix/glpi-modifications
  * -------------------------------------------------------------------------
@@ -34,8 +34,6 @@ Session::checkRight("config", UPDATE);
 
 if (Plugin::isPluginActive("mod")) {
     $uiBranding = new UIBranding();
-
-    Session::checkRight("config", UPDATE);
 
     if (isset($_POST["update"])) {
         $uiBranding->save($_POST, $_FILES);

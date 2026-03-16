@@ -22,7 +22,7 @@
  * You should have received a copy of the GNU General Public License
  * along with "UI Branding plugin for GLPI". If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
- * @copyright Copyright (C) 2025 by i-Vertix/PGUM.
+ * @copyright Copyright (C) 2026 by i-Vertix/PGUM.
  * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
  * @link      https://github.com/i-Vertix/glpi-modifications
  * -------------------------------------------------------------------------
@@ -31,7 +31,7 @@
 use Glpi\Plugin\Hooks;
 use GlpiPlugin\Mod\BrandManager;
 
-const PLUGIN_MOD_VERSION = "11.0.4";
+const PLUGIN_MOD_VERSION = "11.0.5";
 
 function plugin_init_mod()
 {
