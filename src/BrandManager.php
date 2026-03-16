@@ -45,6 +45,13 @@ class BrandManager
     public const BACKUP_DIR = self::FILES_DIR . "/backups";
     public const IMAGES_DIR = self::FILES_DIR . "/images";
 
+    private const MIME_MAP = [
+        'jpg'  => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'png'  => 'image/png',
+        'ico'  => 'image/x-icon',
+    ];
+
     /**
      * Retrieves the directory path for resources within the 'mod' plugin.
      *
@@ -181,7 +188,7 @@ class BrandManager
             }
             $someDirCreated = true;
         }
-        if ($someDirCreated) Session::addMessageAfterRedirect("✅ Created plugin directories");
+        if ($someDirCreated) Session::addMessageAfterRedirect(__("✅ Created plugin directories", "mod"));
 
         // handle default images
         $someResourceInstalled = false;
@@ -213,14 +220,14 @@ class BrandManager
                 }
             }
         }
-        if ($someResourceInstalled) Session::addMessageAfterRedirect("✅ Installed image resources");
-        if ($someBackupCreated) Session::addMessageAfterRedirect("✅ Created backups");
+        if ($someResourceInstalled) Session::addMessageAfterRedirect(__("✅ Installed image resources", "mod"));
+        if ($someBackupCreated) Session::addMessageAfterRedirect(__("✅ Created backups", "mod"));
 
         if (!file_exists(self::FILES_DIR . "/modifiers.ini")) {
             if (!self::initModifiers()) {
                 die("Unable to install modifiers");
             }
-            Session::addMessageAfterRedirect("✅ Installed modifiers");
+            Session::addMessageAfterRedirect(__("✅ Installed modifiers", "mod"));
         }
     }
 
@@ -233,10 +240,10 @@ class BrandManager
             $this->restoreResource($resourceName);
         }
         $this->disableLoginPageModifier();
-        Session::addMessageAfterRedirect("♻️ Restored backups");
+        Session::addMessageAfterRedirect(__("♻️ Restored backups", "mod"));
         // delete files
         Toolbox::deleteDir(self::FILES_DIR);
-        Session::addMessageAfterRedirect("🗑️ Removed resources and backups");
+        Session::addMessageAfterRedirect(__("🗑️ Removed resources and backups", "mod"));
     }
 
     /**
@@ -374,17 +381,25 @@ class BrandManager
         if (!isset($imageResources[$resourceName])) return false;
         if (!isset($file["tmp_name"])) return false;
         if (isset($file["error"]) && $file["error"] !== UPLOAD_ERR_OK) {
-            Session::addMessageAfterRedirect(sprintf("❌ Upload of file %s failed (file invalid)", $file["name"]));
+            Session::addMessageAfterRedirect(sprintf("❌ " . __("Upload of file %s failed (file invalid)", "mod"), $file["name"]));
             return false;
         }
 
-        $extension = pathinfo($file["name"], PATHINFO_EXTENSION);
+        $extension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
         if (!in_array($extension, $imageResources[$resourceName]["accept"], true)) {
-            Session::addMessageAfterRedirect(sprintf("❌ Uploaded file %s is invalid (only %s accepted)", $file["name"], implode(", ", $imageResources[$resourceName]["accept"])));
+            Session::addMessageAfterRedirect(sprintf("❌ " . __("Uploaded file %s is invalid (only %s accepted)", "mod"), $file["name"], implode(", ", $imageResources[$resourceName]["accept"])));
             return false;
         }
+
+        $realMime = Toolbox::getMime($file["tmp_name"]);
+        $expectedMime = self::MIME_MAP[$extension] ?? null;
+        if ($expectedMime === null || $realMime !== $expectedMime) {
+            Session::addMessageAfterRedirect(sprintf("❌ " . __("Uploaded file %s is invalid (only %s accepted)", "mod"), $file["name"], implode(", ", $imageResources[$resourceName]["accept"])));
+            return false;
+        }
+
         if (!move_uploaded_file($file["tmp_name"], $imageResources[$resourceName]["current"])) {
-            Session::addMessageAfterRedirect(sprintf("❌ Upload of file %s failed", $file["name"]));
+            Session::addMessageAfterRedirect(sprintf("❌ " . __("Upload of file %s failed", "mod"), $file["name"]));
             return false;
         }
         return true;
@@ -410,10 +425,11 @@ class BrandManager
             /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
             $ini = ["title" => "GLPI", "login" => "false"];
         }
-        $ini["title"] = htmlescape($title);
+        $ini["title"] = strip_tags(trim($title));
         $iniString = [];
         foreach ($ini as $key => $value) {
-            $iniString[] = "$key=$value";
+            $safeValue = str_replace(['"', "\n", "\r"], ['\\"', '', ''], (string)$value);
+            $iniString[] = "$key=\"$safeValue\"";
         }
         file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
     }
@@ -432,12 +448,12 @@ class BrandManager
             return "GLPI";
         }
         $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
-        if ($ini === false) return false;
+        if ($ini === false) return "GLPI";   // ← safe fallback
         if (!isset($ini["title"])) {
             self::initModifiers();
             return "GLPI";
         }
-        return $ini["title"];
+        return (string)$ini["title"];
     }
 
     /**
@@ -479,7 +495,8 @@ class BrandManager
         $ini["login"] = "1";
         $iniString = [];
         foreach ($ini as $key => $value) {
-            $iniString[] = "$key=$value";
+            $safeValue = str_replace(['"', "\n", "\r"], ['\\"', '', ''], (string)$value);
+            $iniString[] = "$key=\"$safeValue\"";
         }
         file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
     }
@@ -502,7 +519,8 @@ class BrandManager
         $ini["login"] = "0";
         $iniString = [];
         foreach ($ini as $key => $value) {
-            $iniString[] = "$key=$value";
+            $safeValue = str_replace(['"', "\n", "\r"], ['\\"', '', ''], (string)$value);
+            $iniString[] = "$key=\"$safeValue\"";
         }
         file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
     }

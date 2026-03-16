@@ -58,7 +58,11 @@ function plugin_mod_uninstall()
 function plugin_mod_activate()
 {
     $brandManager = new BrandManager();
-    $brandManager->changeTitle("i-Vertix");
+    $currentTitle = BrandManager::getCurrentTitle();
+    if ($currentTitle === "GLPI") {
+        // Only overwrite if still the GLPI default (never customized)
+        $brandManager->changeTitle("i-Vertix");
+    }
     foreach (array_keys(BrandManager::getImageResources()) as $resourceName) {
         $brandManager->applyResource($resourceName);
     }

@@ -35,8 +35,6 @@ Session::checkRight("config", UPDATE);
 if (Plugin::isPluginActive("mod")) {
     $uiBranding = new UIBranding();
 
-    Session::checkRight("config", UPDATE);
-
     if (isset($_POST["update"])) {
         $uiBranding->save($_POST, $_FILES);
         Html::back();
