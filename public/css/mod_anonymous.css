@@ -1,0 +1,17 @@
+ .welcome-anonymous {
+    background: url(../UIBranding/Background) no-repeat fixed top;
+    background-size: cover;
+}
+
+.mod-preview {
+    max-width: 100%;
+    max-height: 180px;
+    width: auto;
+    height: auto;
+    cursor: pointer;
+    object-fit: contain;
+}
+.mod-preview-small {
+    max-width: 96px;
+    max-height: 96px;
+}

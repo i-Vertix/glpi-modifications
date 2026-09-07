@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+    <id>mod</id>
+    <name>UI Branding</name>
+    <key>mod</key>
+    <version>12.0.12</version>
+    <author>i-Vertix</author>
+    <homepage>https://github.com/i-Vertix/glpi-modifications</homepage>
+    <license>GPLv3</license>
+    <requirements>
+        <glpi>12.0</glpi>
+        <php>8.2</php>
+    </requirements>
+    <versions>
+        <version>
+            <num>12.0.12</num>
+            <compatibility>~12.0.0</compatibility>
+            <download_url>https://github.com/i-Vertix/glpi-modifications/releases</download_url>
+        </version>
+    </versions>
+</plugin>

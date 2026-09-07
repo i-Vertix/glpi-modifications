@@ -1,0 +1,135 @@
+{% set title = __('UI Branding', 'mod') %}
+{% set menu = ['config', 'plugin', 'mod'] %}
+{% extends 'layout/page_without_tabs.html.twig' %}
+
+{% block content_body %}
+{#
+UI Branding plugin for GLPI 12
+#}
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+<div class="d-flex flex-column">
+    <div class="row">
+        <div class="col">
+            <div class="p-2 flex-grow-1 card">
+                <form id="main-form" method="post" action="{{ url }}" enctype="multipart/form-data" data-submit-once>
+                    <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+                    {{ fields.largeTitle(__('UI Branding', 'mod'), 'ti ti-paint', true) }}
+
+                    <div class="card-body">
+                        <div class="row">
+                            {{ fields.smallTitle(__('Apply Modifications', 'mod'), 'ti ti-adjustments') }}
+                            {{ fields.textField('title', page_title, __('Page Title', 'mod')) }}
+                            {{ fields.dropdownYesNo('show_background', show_background, __('Show login background', 'mod')) }}
+                            {{ fields.dropdownYesNo('show_custom_logos', show_custom_logos, __('Show custom logos', 'mod')) }}
+                            {{ fields.dropdownYesNo('use_theme_logos', use_theme_logos, __('Enable theme-based logo modifications', 'mod')) }}
+                            {{ fields.dropdownYesNo('show_custom_favicon', show_custom_favicon, __('Show custom favicon', 'mod')) }}
+
+                            {{ fields.smallTitle(__('Custom Images', 'mod'), 'ti ti-photo') }}
+
+                            <div class="form-field row align-items-center col-12 mb-3">
+                                <label class="col-form-label col-xxl-3 text-xxl-end" for="background_input">
+                                    {{ __('Background', 'mod') }} (min. 1920x1080 - JPG)
+                                </label>
+                                <div class="col-xxl-5">
+                                    <input type="file" class="form-control" name="background" accept="image/jpeg" id="background_input">
+                                </div>
+                                <div class="col-xxl-4 text-center">
+                                    <a href="{{ preview_url }}?resource=background" download>
+                                        <img style="max-width:100%;max-height:180px;width:auto;height:auto;cursor:pointer;object-fit:contain" src="{{ preview_url }}?resource=background" alt="{{ __('Background', 'mod') }}" title="{{ __('Click to download', 'mod') }}">
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div id="default-logos-section" class="col-12" {% if use_theme_logos %}style="display:none"{% endif %}>
+                                {{ fields.smallTitle(__('Standard logos', 'mod'), 'ti ti-brand-abstract') }}
+                                {% for logo in base_logos %}
+                                    <div class="form-field row align-items-center mb-3">
+                                        <label class="col-form-label col-xxl-3 text-xxl-end" for="{{ logo.name }}_input">
+                                            {{ logo.label }} ({{ logo.size }} - PNG)
+                                        </label>
+                                        <div class="col-xxl-5">
+                                            <input type="file" class="form-control" name="{{ logo.name }}" accept="image/png" id="{{ logo.name }}_input">
+                                        </div>
+                                        <div class="col-xxl-4 text-center">
+                                            <a href="{{ preview_url }}?resource={{ logo.name }}" download>
+                                                <img style="max-width:100%;max-height:180px;width:auto;height:auto;cursor:pointer;object-fit:contain" src="{{ preview_url }}?resource={{ logo.name }}" alt="{{ logo.label }}" title="{{ __('Click to download', 'mod') }}">
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div id="theme-logos-section" class="col-12" {% if not use_theme_logos %}style="display:none"{% endif %}>
+                                {{ fields.smallTitle(__('Theme-based logos', 'mod'), 'ti ti-palette') }}
+                                {% for logo in theme_logos %}
+                                    <div class="form-field row align-items-center mb-3">
+                                        <label class="col-form-label col-xxl-3 text-xxl-end" for="{{ logo.name }}_input">
+                                            {{ logo.label }} ({{ logo.size }} - PNG)
+                                        </label>
+                                        <div class="col-xxl-5">
+                                            <input type="file" class="form-control" name="{{ logo.name }}" accept="image/png" id="{{ logo.name }}_input">
+                                        </div>
+                                        <div class="col-xxl-4 text-center">
+                                            <a href="{{ preview_url }}?resource={{ logo.name }}" download>
+                                                <img style="max-width:100%;max-height:180px;width:auto;height:auto;cursor:pointer;object-fit:contain" src="{{ preview_url }}?resource={{ logo.name }}" alt="{{ logo.label }}" title="{{ __('Click to download', 'mod') }}">
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="form-field row align-items-center col-12 mb-3">
+                                <label class="col-form-label col-xxl-3 text-xxl-end" for="favicon_input">
+                                    {{ __('Favicon', 'mod') }} (16x16 - ICO)
+                                </label>
+                                <div class="col-xxl-5">
+                                    <input type="file" class="form-control" name="favicon" accept=".ico,image/x-icon" id="favicon_input">
+                                </div>
+                                <div class="col-xxl-4 text-center">
+                                    <a href="{{ preview_url }}?resource=favicon" download>
+                                        <img style="max-width:96px;max-height:96px;width:auto;height:auto;cursor:pointer;object-fit:contain" src="{{ preview_url }}?resource=favicon" alt="{{ __('Favicon', 'mod') }}" title="{{ __('Click to download', 'mod') }}">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-button-separator card-body border-top d-flex justify-content-between gap-2">
+                        <button class="btn btn-outline-secondary" type="submit" name="clear_cache" value="1" formnovalidate>
+                            <i class="ti ti-refresh"></i>
+                            <span>{{ __('Clear cache', 'mod') }}</span>
+                        </button>
+                        <button class="btn btn-primary" type="submit" name="update" value="1">
+                            <i class="ti ti-device-floppy"></i>
+                            <span>{{ _x('button', 'Save') }}</span>
+                        </button>
+                    </div>
+                </form>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const selector = document.querySelector("select[name='use_theme_logos']");
+                        const themeSection = document.getElementById('theme-logos-section');
+                        const standardSection = document.getElementById('default-logos-section');
+
+                        if (!selector || !themeSection || !standardSection) {
+                            return;
+                        }
+
+                        const updateSections = () => {
+                            const enabled = selector.value === '1';
+                            themeSection.style.display = enabled ? '' : 'none';
+                            standardSection.style.display = enabled ? 'none' : '';
+                        };
+
+                        selector.addEventListener('change', updateSections);
+                        updateSections();
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content_body %}
