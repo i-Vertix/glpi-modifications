@@ -1,36 +1,15 @@
 <?php
 
 /**
- * -------------------------------------------------------------------------
- * UI Branding plugin for GLPI
- * -------------------------------------------------------------------------
- *
- * LICENSE
- *
- * This file is part of UI Branding plugin for GLPI.
- *
- * "UI Branding plugin for GLPI" is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * "UI Branding plugin for GLPI" is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with "UI Branding plugin for GLPI". If not, see <http://www.gnu.org/licenses/>.
- * -------------------------------------------------------------------------
- * @copyright Copyright (C) 2026 by i-Vertix/PGUM.
- * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
- * @link      https://github.com/i-Vertix/glpi-modifications
- * -------------------------------------------------------------------------
+ * UI Branding plugin for GLPI 12
+ * Copyright (C) 2026 by i-Vertix/PGUM.
+ * License GPLv3
  */
 
 namespace GlpiPlugin\Mod;
 
 use Glpi\Application\View\TemplateRenderer;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -38,155 +17,173 @@ if (!defined('GLPI_ROOT')) {
 
 class UIBranding
 {
+    private const THEME_LOGO_RESOURCES = [
+        'logo_s_black',
+        'logo_s_grey',
+        'logo_s_white',
+        'logo_m_black',
+        'logo_m_grey',
+        'logo_m_white',
+        'logo_l_black',
+        'logo_l_grey',
+        'logo_l_white',
+    ];
 
-    /**
-     * @param array $data
-     * @param array $files
-     * @return void
-     */
+    private const BASE_LOGO_RESOURCES = [
+        'logo_s',
+        'logo_m',
+        'logo_l',
+    ];
+
     public function save(array $data, array $files): void
     {
-        $brandManager = new BrandManager();
+        $manager = new BrandManager();
+
+        $previousThemeLogos = BrandManager::isThemeLogosEnabled();
+        $useThemeLogos = isset($data['use_theme_logos'])
+            ? (string) $data['use_theme_logos'] === '1'
+            : $previousThemeLogos;
+
         $backgroundChanged = false;
         $faviconChanged = false;
+        $logosChanged = $previousThemeLogos !== $useThemeLogos;
 
-        $useThemeLogos = isset($data['use_theme_logos']) ? $data['use_theme_logos'] === '1' : BrandManager::isThemeLogosEnabled();
-        $logosChanged = BrandManager::isThemeLogosEnabled() !== $useThemeLogos;
-
-        $themeLogoResources = [
-            'logo_s_black',
-            'logo_s_grey',
-            'logo_s_white',
-            'logo_m_black',
-            'logo_m_grey',
-            'logo_m_white',
-            'logo_l_black',
-            'logo_l_grey',
-            'logo_l_white',
-        ];
-
-        if (isset($files['background']['name']) && $files['background']['name'] !== '') {
-            $backgroundChanged = $brandManager->uploadResource("background", $files['background']);
+        if ($this->hasUpload($files, 'background')) {
+            $backgroundChanged = $manager->uploadResource('background', $files['background']);
         }
-        if (!$useThemeLogos) {
-            if (isset($files['logo_s']['name']) && $files['logo_s']['name'] !== '') {
-                $logosChanged = $brandManager->uploadResource("logo_s", $files['logo_s']);
-            }
-            if (isset($files['logo_m']['name']) && $files['logo_m']['name'] !== '') {
-                $logosChanged = $brandManager->uploadResource("logo_m", $files['logo_m']);
-            }
-            if (isset($files['logo_l']['name']) && $files['logo_l']['name'] !== '') {
-                $logosChanged = $brandManager->uploadResource("logo_l", $files['logo_l']);
+
+        if ($useThemeLogos) {
+            foreach (self::THEME_LOGO_RESOURCES as $resource) {
+                if ($this->hasUpload($files, $resource)) {
+                    $logosChanged = $manager->uploadResource($resource, $files[$resource]) || $logosChanged;
+                }
             }
         } else {
-            foreach ($themeLogoResources as $resourceName) {
-                if (isset($files[$resourceName]['name']) && $files[$resourceName]['name'] !== '') {
-                    $logosChanged = $brandManager->uploadResource($resourceName, $files[$resourceName]) || $logosChanged;
+            foreach (self::BASE_LOGO_RESOURCES as $resource) {
+                if ($this->hasUpload($files, $resource)) {
+                    $logosChanged = $manager->uploadResource($resource, $files[$resource]) || $logosChanged;
                 }
             }
         }
 
-        if (isset($files['favicon']['name']) && $files['favicon']['name'] !== '') {
-            $faviconChanged = $brandManager->uploadResource("favicon", $files['favicon']);
+        if ($this->hasUpload($files, 'favicon')) {
+            $faviconChanged = $manager->uploadResource('favicon', $files['favicon']);
         }
 
-        if (isset($data['show_background'])) {
-            if ($data['show_background'] === '1') {
-                // overwrite background if changed or not overwritten yet
-                if ($backgroundChanged || !$brandManager::isLoginPageModified()) {
-                    $brandManager->applyResource("background");
-                }
-                $brandManager->applyLoginPageModifier();
-            } else if ($brandManager::isLoginPageModified()) {
-                $brandManager->restoreResource("background");
-                $brandManager->disableLoginPageModifier();
+        $showBackground = isset($data['show_background']) && (string) $data['show_background'] === '1';
+        if ($showBackground) {
+            if ($backgroundChanged || !BrandManager::isLoginPageModified()) {
+                $manager->applyResource('background');
             }
-        } else if ($backgroundChanged && $brandManager::isLoginPageModified()) {
-            $brandManager->applyResource("background");
+            $manager->applyLoginPageModifier();
+        } elseif (BrandManager::isLoginPageModified()) {
+            $manager->restoreResource('background');
+            $manager->disableLoginPageModifier();
         }
 
-        $brandManager->setThemeLogosEnabled($useThemeLogos);
-        if (isset($data['show_custom_logos'])) {
-            if ($data['show_custom_logos'] === '1') {
-                // overwrite logos if changed or if custom logos are not yet applied
+        $showLogos = isset($data['show_custom_logos']) && (string) $data['show_custom_logos'] === '1';
+
+        if (!$showLogos) {
+            if (BrandManager::isAnyLogoModified()) {
+                foreach (array_merge(self::BASE_LOGO_RESOURCES, self::THEME_LOGO_RESOURCES) as $resource) {
+                    $manager->restoreResource($resource);
+                }
+            }
+        } else {
+            $manager->setThemeLogosEnabled($useThemeLogos);
+
+            if ($useThemeLogos) {
                 $needsApply = $logosChanged;
-                $resourcesToCheck = ["logo_s", "logo_m", "logo_l"];
-                if ($useThemeLogos) {
-                    $resourcesToCheck = array_merge($resourcesToCheck, $themeLogoResources);
-                }
                 if (!$needsApply) {
-                    foreach ($resourcesToCheck as $resource) {
-                        if (!$brandManager::isActiveResourceModified($resource)) {
-                            $needsApply = true;
-                            break;
-                        }
-                    }
+                    $needsApply = !$this->anyResourceModified(self::THEME_LOGO_RESOURCES);
                 }
 
                 if ($needsApply) {
-                    if (!$useThemeLogos) {
-                        // apply base logos
-                        $brandManager->applyResource("logo_s");
-                        $brandManager->applyResource("logo_m");
-                        $brandManager->applyResource("logo_l");
-                    } else {
-                        // apply only theme variants
-                        foreach ($themeLogoResources as $resourceName) {
-                            $brandManager->applyResource($resourceName);
-                        }
+                    foreach (self::THEME_LOGO_RESOURCES as $resource) {
+                        $manager->applyResource($resource);
                     }
                 }
-            } else if (BrandManager::isAnyLogoModified()) {
-                $brandManager->restoreResource("logo_s");
-                $brandManager->restoreResource("logo_m");
-                $brandManager->restoreResource("logo_l");
-            }
-        } else if ($logosChanged) {
-            if (!$useThemeLogos) {
-                $brandManager->applyResource("logo_s");
-                $brandManager->applyResource("logo_m");
-                $brandManager->applyResource("logo_l");
             } else {
-                foreach ($themeLogoResources as $resourceName) {
-                    $brandManager->applyResource($resourceName);
+                $needsApply = $logosChanged;
+                if (!$needsApply) {
+                    $needsApply = !$this->anyResourceModified(self::BASE_LOGO_RESOURCES);
+                }
+
+                if ($needsApply) {
+                    foreach (self::BASE_LOGO_RESOURCES as $resource) {
+                        $manager->applyResource($resource);
+                    }
                 }
             }
         }
 
-        if (isset($data['show_custom_favicon'])) {
-            if ($data['show_custom_favicon'] === '1') {
-                // overwrite background if changed or not overwritten yet
-                if ($faviconChanged || !$brandManager::isActiveResourceModified("favicon")) {
-                    $brandManager->applyResource("favicon");
-                }
-            } else if ($brandManager::isActiveResourceModified("favicon")) {
-                $brandManager->restoreResource("favicon");
+        $manager->setThemeLogosEnabled($useThemeLogos);
+
+        $showFavicon = isset($data['show_custom_favicon']) && (string) $data['show_custom_favicon'] === '1';
+        if ($showFavicon) {
+            if ($faviconChanged || !BrandManager::isActiveResourceModified('favicon')) {
+                $manager->applyResource('favicon');
             }
-        } else if ($faviconChanged && $brandManager::isActiveResourceModified("favicon")) {
-            $brandManager->applyResource("favicon");
+        } elseif (BrandManager::isActiveResourceModified('favicon')) {
+            $manager->restoreResource('favicon');
         }
 
-        if (isset($data['title'])) {
-            $brandManager->changeTitle($data["title"]);
+        if (array_key_exists('title', $data)) {
+            $manager->changeTitle((string) $data['title']);
         }
     }
 
-    /**
-     * @return bool
-     */
-    public function display(): bool
+    private function hasUpload(array $files, string $name): bool
     {
-        global $CFG_GLPI;
-        TemplateRenderer::getInstance()->display('@mod/uibranding.html.twig', [
-            "url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/uibranding.php",
-            "preview_url" => $CFG_GLPI['root_doc'] . "/plugins/mod/front/resource.send.php",
-            "show_background" => BrandManager::isLoginPageModified(),
-            "show_custom_logos" => BrandManager::isAnyLogoModified(),
-            "use_theme_logos" => BrandManager::isThemeLogosEnabled(),
-            "show_custom_favicon" => BrandManager::isActiveResourceModified("favicon"),
-            "title" => BrandManager::getCurrentTitle(),
-        ]);
-        return true;
+        if (!isset($files[$name])) {
+            return false;
+        }
+
+        $file = $files[$name];
+        if ($file instanceof UploadedFile) {
+            return $file->getError() !== UPLOAD_ERR_NO_FILE;
+        }
+
+        return isset($file['name'], $file['tmp_name']) && (string) $file['name'] !== '';
+    }
+
+    private function anyResourceModified(array $resources): bool
+    {
+        foreach ($resources as $resource) {
+            if (BrandManager::isActiveResourceModified($resource)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getViewData(string $url, string $previewUrl): array
+    {
+        return [
+            'url'                 => $url,
+            'preview_url'         => $previewUrl,
+            'show_background'     => BrandManager::isLoginPageModified(),
+            'show_custom_logos'   => BrandManager::isAnyLogoModified(),
+            'use_theme_logos'     => BrandManager::isThemeLogosEnabled(),
+            'show_custom_favicon' => BrandManager::isActiveResourceModified('favicon'),
+            'page_title'          => BrandManager::getCurrentTitle(),
+            'base_logos'          => [
+                ['name' => 'logo_s', 'label' => __('Small Logo', 'mod'), 'size' => '53x53'],
+                ['name' => 'logo_m', 'label' => __('Medium Logo', 'mod'), 'size' => '100x55'],
+                ['name' => 'logo_l', 'label' => __('Large Logo', 'mod'), 'size' => '250x138'],
+            ],
+            'theme_logos'         => [
+                ['name' => 'logo_s_black', 'label' => __('Small Logo (black)', 'mod'), 'size' => '53x53'],
+                ['name' => 'logo_s_grey', 'label' => __('Small Logo (grey)', 'mod'), 'size' => '53x53'],
+                ['name' => 'logo_s_white', 'label' => __('Small Logo (white)', 'mod'), 'size' => '53x53'],
+                ['name' => 'logo_m_black', 'label' => __('Medium Logo (black)', 'mod'), 'size' => '100x55'],
+                ['name' => 'logo_m_grey', 'label' => __('Medium Logo (grey)', 'mod'), 'size' => '100x55'],
+                ['name' => 'logo_m_white', 'label' => __('Medium Logo (white)', 'mod'), 'size' => '100x55'],
+                ['name' => 'logo_l_black', 'label' => __('Large Logo (black)', 'mod'), 'size' => '250x138'],
+                ['name' => 'logo_l_grey', 'label' => __('Large Logo (grey)', 'mod'), 'size' => '250x138'],
+                ['name' => 'logo_l_white', 'label' => __('Large Logo (white)', 'mod'), 'size' => '250x138'],
+            ],
+        ];
     }
 
 }

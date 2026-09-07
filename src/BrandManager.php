@@ -1,37 +1,16 @@
 <?php
 
 /**
- * -------------------------------------------------------------------------
- * UI Branding plugin for GLPI
- * -------------------------------------------------------------------------
- *
- * LICENSE
- *
- * This file is part of UI Branding plugin for GLPI.
- *
- * "UI Branding plugin for GLPI" is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * "UI Branding plugin for GLPI" is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with "UI Branding plugin for GLPI". If not, see <http://www.gnu.org/licenses/>.
- * -------------------------------------------------------------------------
- * @copyright Copyright (C) 2025 by i-Vertix/PGUM.
- * @license   GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
- * @link      https://github.com/i-Vertix/glpi-modifications
- * -------------------------------------------------------------------------
+ * UI Branding plugin for GLPI 12
+ * Copyright (C) 2026 by i-Vertix/PGUM.
+ * License GPLv3
  */
 
 namespace GlpiPlugin\Mod;
 
 use Plugin;
 use Session;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Toolbox;
 
 if (!defined('GLPI_ROOT')) {
@@ -40,641 +19,569 @@ if (!defined('GLPI_ROOT')) {
 
 class BrandManager
 {
-
-    public const FILES_DIR = GLPI_PLUGIN_DOC_DIR . "/mod";
-    public const BACKUP_DIR = self::FILES_DIR . "/backups";
-    public const IMAGES_DIR = self::FILES_DIR . "/images";
+    public const FILES_DIR = GLPI_PLUGIN_DOC_DIR . '/mod';
+    public const BACKUP_DIR = self::FILES_DIR . '/backups';
+    public const IMAGES_DIR = self::FILES_DIR . '/images';
 
     private const MIME_MAP = [
-        'jpg' => ['image/jpeg'],
+        'jpg'  => ['image/jpeg'],
         'jpeg' => ['image/jpeg'],
-        'png' => ['image/png'],
-        'ico' => ['image/x-icon', 'image/vnd.microsoft.icon'],
+        'png'  => ['image/png'],
+        'ico'  => ['image/x-icon', 'image/vnd.microsoft.icon'],
     ];
 
-    /**
-     * Retrieves the directory path for resources within the 'mod' plugin.
-     *
-     * @return string Returns the full path to the resources directory.
-     */
     public static function getResourceDir(): string
     {
-        return Plugin::getPhpDir('mod') . "/resources";
+        return Plugin::getPhpDir('mod') . '/resources';
     }
 
     /**
-     * @return array[]
+     * Validate a resource key coming from an HTTP request.
      */
+    public static function isValidResourceKey(string $resourceName): bool
+    {
+        return array_key_exists($resourceName, self::getImageResources());
+    }
+
+    /**
+     * Return the plugin-owned current file for a resource.
+     */
+    public static function getCurrentResourceFile(string $resourceName): ?string
+    {
+        $resources = self::getImageResources();
+        if (!isset($resources[$resourceName]['current'])) {
+            return null;
+        }
+
+        $file = $resources[$resourceName]['current'];
+        return is_string($file) ? $file : null;
+    }
+
     public static function getImageResources(): array
     {
+        $root = GLPI_ROOT . '/public/pics/logos';
+
         return [
-            /*
-             * Something special about background.jpg:
-             * (OBSOLETE - FOUND SOLUTION BELOW)
-             * I tried to figure out several ways to not have to copy this beast into the public pics folder
-             * but everything I tried did not work out due to the strict routing limitations of GLPI 11.
-             * In GLPI 11 every php page load goes through the GLPI index/router and dismisses the request if not logged in
-             * This makes a cache-optimized wrapper php script obsolete. It would have provided the .jpg from the webserver restricted files/_plugins directory.
-             * There is also available a hook to integrate the plugin into the login page itself (Hooks::DISPLAY_LOGIN) but I did not want to
-             * base64 encode the background image due to performance concerns (no browser caching of the (large) background image).
-             * Other than that there is nothing I can actually do. Its not the best option to replace/delete from the glpi/public/pics folder, but here we are...
-             * glpi/plugins/mod/public could also work out but as glpi does absolutely not want plugins to write in their own directory I keep the glpi/public/pics directory for now
-             *
-             * (UPDATE - CURRENT SOLUTION)
-             * After having a hard time believing there is no such thing as "public" scripts (not logged in) I stumbled upon the GLPI Firewall and the possibility
-             * to add no_check (no login) strategies for plugin url patterns!
-             * Currently this is implemented in the plugin_init_mod function inside setup.php.
-             * I hope this little trick will also be available in future versions lol
-             * otherwise I need to roll back to my previous solutions :(
-             *
-             */
-            "background" => [
-                "default" => self::getResourceDir() . "/images/background.jpg",
-                "current" => self::IMAGES_DIR . "/background.jpg",
-//            "active" => GLPI_ROOT . "/public/pics/plugin_mod_background.jpg",
-                "accept" => ["jpeg", "jpg"]
+            'background' => [
+                'default'  => self::getResourceDir() . '/images/background.jpg',
+                'current'  => self::IMAGES_DIR . '/background.jpg',
+                'accept'   => ['jpg', 'jpeg'],
             ],
-            "favicon" => [
-                "default" => self::getResourceDir() . "/images/favicon.ico",
-                "current" => self::IMAGES_DIR . "/favicon.ico",
-                "active" => GLPI_ROOT . "/public/pics/favicon.ico",
-                "backup" => self::BACKUP_DIR . "/favicon.ico",
-                "accept" => ["ico"]
+            'favicon' => [
+                'default'  => self::getResourceDir() . '/images/favicon.ico',
+                'current'  => self::IMAGES_DIR . '/favicon.ico',
+                'active'   => GLPI_ROOT . '/public/pics/favicon.ico',
+                'backup'   => self::BACKUP_DIR . '/favicon.ico',
+                'accept'   => ['ico'],
             ],
-            "logo_s" => [
-                "default" => self::getResourceDir() . "/images/logo-G-100.png",
-                "current" => self::IMAGES_DIR . "/logo-G-100.png",
-                "active" => [
-                    GLPI_ROOT . "/public/pics/logos/logo-G-100-black.png",
-                    GLPI_ROOT . "/public/pics/logos/logo-G-100-grey.png",
-                    GLPI_ROOT . "/public/pics/logos/logo-G-100-white.png",
+            'logo_s' => self::logoGroup(
+                self::getResourceDir() . '/images/logo-G-100.png',
+                self::IMAGES_DIR . '/logo-G-100.png',
+                [
+                    $root . '/logo-G-100-black.png',
+                    $root . '/logo-G-100-grey.png',
+                    $root . '/logo-G-100-white.png',
                 ],
-                "backup" => [
-                    self::BACKUP_DIR . "/logo-G-100-black.png",
-                    self::BACKUP_DIR . "/logo-G-100-grey.png",
-                    self::BACKUP_DIR . "/logo-G-100-white.png",
+                [
+                    self::BACKUP_DIR . '/logo-G-100-black.png',
+                    self::BACKUP_DIR . '/logo-G-100-grey.png',
+                    self::BACKUP_DIR . '/logo-G-100-white.png',
+                ]
+            ),
+            'logo_s_black' => self::logoVariant('logo-G-100.png', 'logo-G-100-black.png'),
+            'logo_s_grey'  => self::logoVariant('logo-G-100.png', 'logo-G-100-grey.png'),
+            'logo_s_white' => self::logoVariant('logo-G-100.png', 'logo-G-100-white.png'),
+
+            'logo_m' => self::logoGroup(
+                self::getResourceDir() . '/images/logo-GLPI-100.png',
+                self::IMAGES_DIR . '/logo-GLPI-100.png',
+                [
+                    $root . '/logo-GLPI-100-black.png',
+                    $root . '/logo-GLPI-100-grey.png',
+                    $root . '/logo-GLPI-100-white.png',
                 ],
-                "accept" => ["png"]
-            ],
-            "logo_s_black" => [
-                "default" => self::getResourceDir() . "/images/logo-G-100.png",
-                "current" => self::IMAGES_DIR . "/logo-G-100-black.png",
-                "active" => GLPI_ROOT . "/public/pics/logos/logo-G-100-black.png",
-                "backup" => self::BACKUP_DIR . "/logo-G-100-black.png",
-                "accept" => ["png"]
-            ],
-            "logo_s_grey" => [
-                "default" => self::getResourceDir() . "/images/logo-G-100.png",
-                "current" => self::IMAGES_DIR . "/logo-G-100-grey.png",
-                "active" => GLPI_ROOT . "/public/pics/logos/logo-G-100-grey.png",
-                "backup" => self::BACKUP_DIR . "/logo-G-100-grey.png",
-                "accept" => ["png"]
-            ],
-            "logo_s_white" => [
-                "default" => self::getResourceDir() . "/images/logo-G-100.png",
-                "current" => self::IMAGES_DIR . "/logo-G-100-white.png",
-                "active" => GLPI_ROOT . "/public/pics/logos/logo-G-100-white.png",
-                "backup" => self::BACKUP_DIR . "/logo-G-100-white.png",
-                "accept" => ["png"]
-            ],
-            "logo_m" => [
-                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
-                "current" => self::IMAGES_DIR . "/logo-GLPI-100.png",
-                "active" => [
-                    GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-black.png",
-                    GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-grey.png",
-                    GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-white.png",
+                [
+                    self::BACKUP_DIR . '/logo-GLPI-100-black.png',
+                    self::BACKUP_DIR . '/logo-GLPI-100-grey.png',
+                    self::BACKUP_DIR . '/logo-GLPI-100-white.png',
+                ]
+            ),
+            'logo_m_black' => self::logoVariant('logo-GLPI-100.png', 'logo-GLPI-100-black.png'),
+            'logo_m_grey'  => self::logoVariant('logo-GLPI-100.png', 'logo-GLPI-100-grey.png'),
+            'logo_m_white' => self::logoVariant('logo-GLPI-100.png', 'logo-GLPI-100-white.png'),
+
+            'logo_l' => self::logoGroup(
+                self::getResourceDir() . '/images/logo-GLPI-250.png',
+                self::IMAGES_DIR . '/logo-GLPI-250.png',
+                [
+                    $root . '/logo-GLPI-250-black.png',
+                    $root . '/logo-GLPI-250-grey.png',
+                    $root . '/logo-GLPI-250-white.png',
                 ],
-                "backup" => [
-                    self::BACKUP_DIR . "/logo-GLPI-100-black.png",
-                    self::BACKUP_DIR . "/logo-GLPI-100-grey.png",
-                    self::BACKUP_DIR . "/logo-GLPI-100-white.png",
-                ],
-                "accept" => ["png"]
-            ],
-            "logo_m_black" => [
-                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
-                "current" => self::IMAGES_DIR . "/logo-GLPI-100-black.png",
-                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-black.png",
-                "backup" => self::BACKUP_DIR . "/logo-GLPI-100-black.png",
-                "accept" => ["png"]
-            ],
-            "logo_m_grey" => [
-                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
-                "current" => self::IMAGES_DIR . "/logo-GLPI-100-grey.png",
-                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-grey.png",
-                "backup" => self::BACKUP_DIR . "/logo-GLPI-100-grey.png",
-                "accept" => ["png"]
-            ],
-            "logo_m_white" => [
-                "default" => self::getResourceDir() . "/images/logo-GLPI-100.png",
-                "current" => self::IMAGES_DIR . "/logo-GLPI-100-white.png",
-                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-100-white.png",
-                "backup" => self::BACKUP_DIR . "/logo-GLPI-100-white.png",
-                "accept" => ["png"]
-            ],
-            "logo_l" => [
-                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
-                "current" => self::IMAGES_DIR . "/logo-GLPI-250.png",
-                "active" => [
-                    GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-black.png",
-                    GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-grey.png",
-                    GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-white.png",
-                ],
-                "backup" => [
-                    self::BACKUP_DIR . "/logo-GLPI-250-black.png",
-                    self::BACKUP_DIR . "/logo-GLPI-250-grey.png",
-                    self::BACKUP_DIR . "/logo-GLPI-250-white.png",
-                ],
-                "accept" => ["png"]
-            ],
-            "logo_l_black" => [
-                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
-                "current" => self::IMAGES_DIR . "/logo-GLPI-250-black.png",
-                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-black.png",
-                "backup" => self::BACKUP_DIR . "/logo-GLPI-250-black.png",
-                "accept" => ["png"]
-            ],
-            "logo_l_grey" => [
-                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
-                "current" => self::IMAGES_DIR . "/logo-GLPI-250-grey.png",
-                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-grey.png",
-                "backup" => self::BACKUP_DIR . "/logo-GLPI-250-grey.png",
-                "accept" => ["png"]
-            ],
-            "logo_l_white" => [
-                "default" => self::getResourceDir() . "/images/logo-GLPI-250.png",
-                "current" => self::IMAGES_DIR . "/logo-GLPI-250-white.png",
-                "active" => GLPI_ROOT . "/public/pics/logos/logo-GLPI-250-white.png",
-                "backup" => self::BACKUP_DIR . "/logo-GLPI-250-white.png",
-                "accept" => ["png"]
-            ],
+                [
+                    self::BACKUP_DIR . '/logo-GLPI-250-black.png',
+                    self::BACKUP_DIR . '/logo-GLPI-250-grey.png',
+                    self::BACKUP_DIR . '/logo-GLPI-250-white.png',
+                ]
+            ),
+            'logo_l_black' => self::logoVariant('logo-GLPI-250.png', 'logo-GLPI-250-black.png'),
+            'logo_l_grey'  => self::logoVariant('logo-GLPI-250.png', 'logo-GLPI-250-grey.png'),
+            'logo_l_white' => self::logoVariant('logo-GLPI-250.png', 'logo-GLPI-250-white.png'),
         ];
     }
 
-    /**
-     * @return bool
-     */
+    private static function logoGroup(string $default, string $current, array $active, array $backup): array
+    {
+        return [
+            'default' => $default,
+            'current' => $current,
+            'active'  => $active,
+            'backup'  => $backup,
+            'accept'  => ['png'],
+        ];
+    }
+
+    private static function logoVariant(string $defaultName, string $activeName): array
+    {
+        $root = GLPI_ROOT . '/public/pics/logos';
+        return [
+            'default' => self::getResourceDir() . '/images/' . $defaultName,
+            'current' => self::IMAGES_DIR . '/' . $activeName,
+            'active'  => $root . '/' . $activeName,
+            'backup'  => self::BACKUP_DIR . '/' . $activeName,
+            'accept'  => ['png'],
+        ];
+    }
+
+    private static function ensureDir(string $dir): void
+    {
+        if (is_dir($dir)) {
+            return;
+        }
+
+        if (!mkdir($dir, 0755, true) && !is_dir($dir)) {
+            throw new \RuntimeException(sprintf('Unable to create directory: %s', $dir));
+        }
+    }
+
+    private static function copyChecked(string $source, string $destination, string $label): void
+    {
+        if (!is_file($source) || !is_readable($source)) {
+            throw new \RuntimeException(sprintf('Source file is not readable: %s', $label));
+        }
+
+        $parent = dirname($destination);
+        self::ensureDir($parent);
+
+        if (!copy($source, $destination)) {
+            throw new \RuntimeException(sprintf('Unable to copy resource: %s', $label));
+        }
+    }
+
+    private static function removeChecked(string $file): void
+    {
+        if (!file_exists($file)) {
+            return;
+        }
+
+        if (!unlink($file)) {
+            throw new \RuntimeException(sprintf('Unable to remove resource: %s', $file));
+        }
+    }
+
+    private static function readModifiers(): array
+    {
+        $file = self::FILES_DIR . '/modifiers.ini';
+
+        if (!is_file($file)) {
+            return [
+                'title'       => 'GLPI',
+                'login'       => '0',
+                'theme_logos' => '0',
+            ];
+        }
+
+        $ini = parse_ini_file($file, false, INI_SCANNER_RAW);
+        if (!is_array($ini)) {
+            return [
+                'title'       => 'GLPI',
+                'login'       => '0',
+                'theme_logos' => '0',
+            ];
+        }
+
+        return [
+            'title'       => isset($ini['title']) ? (string) $ini['title'] : 'GLPI',
+            'login'       => isset($ini['login']) && (string) $ini['login'] === '1' ? '1' : '0',
+            'theme_logos' => isset($ini['theme_logos']) && (string) $ini['theme_logos'] === '1' ? '1' : '0',
+        ];
+    }
+
+    private static function writeModifiers(array $values): void
+    {
+        self::ensureDir(self::FILES_DIR);
+
+        $title = str_replace(['"', "\r", "\n"], ['\"', '', ''], strip_tags(trim((string) ($values['title'] ?? 'GLPI'))));
+        $login = ($values['login'] ?? '0') === '1' ? '1' : '0';
+        $theme = ($values['theme_logos'] ?? '0') === '1' ? '1' : '0';
+
+        $content = sprintf(
+            "title=\"%s\"\nlogin=\"%s\"\ntheme_logos=\"%s\"\n",
+            $title,
+            $login,
+            $theme
+        );
+
+        $tmp = tempnam(self::FILES_DIR, 'mod_');
+        if ($tmp === false || file_put_contents($tmp, $content, LOCK_EX) === false) {
+            if ($tmp !== false) {
+                @unlink($tmp);
+            }
+            throw new \RuntimeException('Unable to write plugin configuration.');
+        }
+
+        if (!rename($tmp, self::FILES_DIR . '/modifiers.ini')) {
+            @unlink($tmp);
+            throw new \RuntimeException('Unable to replace plugin configuration.');
+        }
+    }
+
     private static function initModifiers(): bool
     {
-        return copy(self::getResourceDir() . "/modifiers.ini", self::FILES_DIR . "/modifiers.ini");
+        try {
+            if (is_file(self::getResourceDir() . '/modifiers.ini')) {
+                self::copyChecked(
+                    self::getResourceDir() . '/modifiers.ini',
+                    self::FILES_DIR . '/modifiers.ini',
+                    'modifiers.ini'
+                );
+            } else {
+                self::writeModifiers([
+                    'title' => 'GLPI',
+                    'login' => '0',
+                    'theme_logos' => '0',
+                ]);
+            }
+            return true;
+        } catch (\Throwable) {
+            return false;
+        }
     }
 
-    /**
-     * Installs the necessary parts for the plugin.
-     *
-     * This method creates required directories for files, backups, and images.
-     * It also ensures the default image resources are installed and their backups are created.
-     * Additionally, it installs title modification resources.
-     *
-     * @return void
-     */
     public function install(): void
     {
-        // create directories for files, backup and images
-        $someDirCreated = false;
-        if (!file_exists(self::FILES_DIR)) {
-            if (!mkdir(self::FILES_DIR, 0755) && !is_dir(self::FILES_DIR)) {
-                die(sprintf('Unable to create plugin directory (%s)', self::FILES_DIR));
-            }
-            $someDirCreated = true;
-        }
-        if (!file_exists(self::BACKUP_DIR)) {
-            if (!mkdir(self::BACKUP_DIR, 0755) && !is_dir(self::BACKUP_DIR)) {
-                die(sprintf('Unable to create plugin directory (%s)', self::BACKUP_DIR));
-            }
-            $someDirCreated = true;
-        }
-        if (!file_exists(self::IMAGES_DIR)) {
-            if (!mkdir(self::IMAGES_DIR, 0755) && !is_dir(self::IMAGES_DIR)) {
-                die(sprintf('Unable to create plugin directory (%s)', self::IMAGES_DIR));
-            }
-            $someDirCreated = true;
-        }
-        if ($someDirCreated) Session::addMessageAfterRedirect("✅ " . __("Created plugin directories", "mod"));
+        self::ensureDir(self::FILES_DIR);
+        self::ensureDir(self::BACKUP_DIR);
+        self::ensureDir(self::IMAGES_DIR);
 
-        // handle default images
-        $someResourceInstalled = false;
-        $someBackupCreated = false;
-        foreach (self::getImageResources() as $imageResource => $paths) {
-            if (!file_exists($paths["current"])) {
-                if (!copy($paths["default"], $paths["current"])) {
-                    die("Unable to install $imageResource resource");
-                }
-                $someResourceInstalled = true;
+        foreach (self::getImageResources() as $name => $resource) {
+            if (!is_file($resource['current'])) {
+                self::copyChecked($resource['default'], $resource['current'], $name);
             }
 
-            // create backup
-            if (isset($paths["backup"], $paths["active"])) {
-                if (is_array($paths["backup"])) {
-                    foreach ($paths["backup"] as $backupIndex => $backupPath) {
-                        if (!file_exists($backupPath)) {
-                            if (!copy($paths["active"][$backupIndex], $backupPath)) {
-                                die("Unable to backup $imageResource resource ($backupIndex)");
-                            }
-                            $someBackupCreated = true;
-                        }
+            if (!isset($resource['active'], $resource['backup'])) {
+                continue;
+            }
+
+            if (is_array($resource['active'])) {
+                foreach ($resource['active'] as $index => $active) {
+                    $backup = $resource['backup'][$index];
+                    if (!is_file($backup) && is_file($active)) {
+                        self::copyChecked($active, $backup, $name . ' backup');
                     }
-                } else if (!file_exists($paths["backup"])) {
-                    if (!copy($paths["active"], $paths["backup"])) {
-                        die("Unable to backup $imageResource resource");
-                    }
-                    $someBackupCreated = true;
                 }
+            } elseif (!is_file($resource['backup']) && is_file($resource['active'])) {
+                self::copyChecked($resource['active'], $resource['backup'], $name . ' backup');
             }
         }
-        if ($someResourceInstalled) Session::addMessageAfterRedirect("✅ " . __("Installed image resources", "mod"));
-        if ($someBackupCreated) Session::addMessageAfterRedirect("✅ " . __("Created backups", "mod"));
 
-        if (!file_exists(self::FILES_DIR . "/modifiers.ini")) {
+        if (!is_file(self::FILES_DIR . '/modifiers.ini')) {
             if (!self::initModifiers()) {
-                die("Unable to install modifiers");
+                throw new \RuntimeException('Unable to initialize plugin configuration.');
             }
-            Session::addMessageAfterRedirect("✅ " . __("Installed modifiers", "mod"));
         }
     }
 
-    /**
-     * @return void
-     */
     public function uninstall(): void
     {
-        foreach (array_keys(self::getImageResources()) as $resourceName) {
-            $this->restoreResource($resourceName);
+        foreach (array_keys(self::getImageResources()) as $resource) {
+            $this->restoreResource($resource);
         }
+
         $this->disableLoginPageModifier();
-        Session::addMessageAfterRedirect("♻️ " . __("Restored backups", "mod"));
-        // delete files
-        Toolbox::deleteDir(self::FILES_DIR);
-        Session::addMessageAfterRedirect("🗑️ " . __("Removed resources and backups", "mod"));
+
+        if (is_dir(self::FILES_DIR)) {
+            Toolbox::deleteDir(self::FILES_DIR);
+        }
     }
 
-    /**
-     * Checks if a backup exists for the specified resource.
-     *
-     * @param string $resourceName The name of the resource to check for a backup.
-     * @return bool True if a backup exists for the specified resource, otherwise false.
-     */
     public static function resourceBackupExists(string $resourceName): bool
     {
-        $imageResources = self::getImageResources();
-        if (!isset($imageResources[$resourceName]["backup"])) return false;
-        if (is_array($imageResources[$resourceName]["backup"])) {
-            return file_exists($imageResources[$resourceName]["backup"][0]);
-        } else if (file_exists($imageResources[$resourceName]["backup"])) {
+        $resources = self::getImageResources();
+        if (!isset($resources[$resourceName]['backup'])) {
+            return false;
+        }
+
+        $backup = $resources[$resourceName]['backup'];
+        if (is_array($backup)) {
+            foreach ($backup as $file) {
+                if (!is_file($file)) {
+                    return false;
+                }
+            }
             return true;
         }
-        return false;
+
+        return is_file($backup);
     }
 
-    /**
-     * Checks if the active resource has been modified.
-     *
-     * This method determines whether a resource has been altered by verifying the checksum
-     * (MD5 hash) of its active file(s) against its backup file(s). If backups do not exist,
-     * or if checksum values differ, the resource is considered modified.
-     *
-     * @param string $resourceName The name of the resource to check.
-     *
-     * @return bool Returns true if the resource is modified; otherwise, false.
-     */
     public static function isActiveResourceModified(string $resourceName): bool
     {
-        $imageResources = self::getImageResources();
-        if (!isset($imageResources[$resourceName]["active"])) return false;
+        $resources = self::getImageResources();
+        if (!isset($resources[$resourceName]['active'])) {
+            return false;
+        }
 
-        if (isset($imageResources[$resourceName]["backup"])) {
-            // backups are made - check md5 hash of files
-            if (is_array($imageResources[$resourceName]["active"])) {
-                for ($i = 0, $iMax = count($imageResources[$resourceName]["active"]); $i < $iMax; $i++) {
-                    // if active file does not exist resource is not modified
-                    if (!file_exists($imageResources[$resourceName]["active"][$i])) continue;
-                    // if backup file does not exist (user deleted backup folder) we say it is modified
-                    if (!file_exists($imageResources[$resourceName]["backup"][$i])) return true;
-                    // compare file hashes
-                    if (md5_file($imageResources[$resourceName]["active"][$i]) !== md5_file($imageResources[$resourceName]["backup"][$i])) return true;
+        $active = $resources[$resourceName]['active'];
+        $backup = $resources[$resourceName]['backup'] ?? null;
+
+        if (is_array($active)) {
+            foreach ($active as $index => $activeFile) {
+                if (!is_file($activeFile)) {
+                    continue;
                 }
-                return false;
-            } else {
-                if (!file_exists($imageResources[$resourceName]["active"])) return false;
-                if (!file_exists($imageResources[$resourceName]["backup"])) return true;
-                return md5_file($imageResources[$resourceName]["active"]) !== md5_file($imageResources[$resourceName]["backup"]);
-            }
-        } else if (is_array($imageResources[$resourceName]["active"])) {
-            if (!isset($imageResources[$resourceName]["active"][0])) return false;
-            return file_exists($imageResources[$resourceName]["active"][0]);
-        } else return file_exists($imageResources[$resourceName]["active"]);
-    }
-
-    /**
-     * Restores the specified resource to its original state.
-     *
-     * This method restores a resource by copying backup files to their corresponding active files. If backups
-     * are not available, the active files are removed instead.
-     *
-     * @param string $resourceName The name of the resource to restore.
-     *
-     * @return void
-     */
-    public function restoreResource(string $resourceName): void
-    {
-        $imageResources = self::getImageResources();
-        if (!isset($imageResources[$resourceName]["active"])) return;
-        if (isset($imageResources[$resourceName]["backup"])) {
-            if (is_array($imageResources[$resourceName]["active"])) {
-                // restore multiple files
-                for ($i = 0, $iMax = count($imageResources[$resourceName]["active"]); $i < $iMax; $i++) {
-                    // skip if backup does not exist
-                    if (!file_exists($imageResources[$resourceName]["backup"][$i])) continue;
-                    copy($imageResources[$resourceName]["backup"][$i], $imageResources[$resourceName]["active"][$i]);
+                if (!is_array($backup) || !isset($backup[$index]) || !is_file($backup[$index])) {
+                    return true;
                 }
-            } else {
-                // restore a single file
-                if (!file_exists($imageResources[$resourceName]["backup"])) return;
-                copy($imageResources[$resourceName]["backup"], $imageResources[$resourceName]["active"]);
+                if (md5_file($activeFile) !== md5_file($backup[$index])) {
+                    return true;
+                }
             }
-        } else if (is_array($imageResources[$resourceName]["active"])) {
-            // files have no backup - remove all active files
-            foreach ($imageResources[$resourceName]["active"] as $activeFile) {
-                unlink($activeFile);
-            }
-        } else {
-            // file has no backup - remove the active file
-            unlink($imageResources[$resourceName]["active"]);
+            return false;
         }
+
+        if (!is_file($active)) {
+            return false;
+        }
+        if (!is_string($backup) || !is_file($backup)) {
+            return true;
+        }
+
+        return md5_file($active) !== md5_file($backup);
     }
 
-    /**
-     * Applies the current version of the resource to its active location.
-     *
-     * This method copies the current version of the specified resource to its active file(s),
-     * overwriting the existing active resource.
-     *
-     * @param string $resourceName The name of the resource to apply.
-     *
-     * @return void
-     */
-    public function applyResource(string $resourceName): void
-    {
-        $imageResources = self::getImageResources();
-        if (!isset($imageResources[$resourceName]["active"])) return;
-
-        // Check if the "current" resource exists
-        // in case copy the default image as "current" resource
-        // this check is also important after the upgrade to 11.0.5 introducing theme-related logos
-        if (
-            isset($imageResources[$resourceName]["default"]) &&
-            !file_exists($imageResources[$resourceName]["current"]) &&
-            file_exists($imageResources[$resourceName]["default"])
-        ) {
-            copy($imageResources[$resourceName]["default"], $imageResources[$resourceName]["current"]);
-        }
-
-        if (is_array($imageResources[$resourceName]["active"])) {
-            foreach ($imageResources[$resourceName]["active"] as $activeFile) {
-                copy($imageResources[$resourceName]["current"], $activeFile);
-            }
-        } else {
-            copy($imageResources[$resourceName]["current"], $imageResources[$resourceName]["active"]);
-        }
-    }
-
-    /**
-     * Handles the upload of a resource file.
-     *
-     * This method uploads a file resource to a predefined path associated with the resource name.
-     * It validates the file's type, checks for any upload errors, and ensures the file is moved
-     * to the correct location if all conditions are met.
-     *
-     * @param string $resourceName The name of the resource where the file will be uploaded.
-     * @param array $file The file data (including 'tmp_name', 'name', 'error', etc.) from the upload.
-     * @return bool Returns true if the file was successfully uploaded; otherwise, false.
-     */
-    public function uploadResource(string $resourceName, array $file): bool
-    {
-        $imageResources = self::getImageResources();
-        if (!isset($imageResources[$resourceName])) return false;
-        if (!isset($file["tmp_name"])) return false;
-        if (isset($file["error"]) && $file["error"] !== UPLOAD_ERR_OK) {
-            Session::addMessageAfterRedirect(sprintf("❌ " . __("Upload of file %s failed (file invalid)", "mod"), $file["name"]));
-            return false;
-        }
-
-        $extension = strtolower(pathinfo($file["name"], PATHINFO_EXTENSION));
-        if (!in_array($extension, $imageResources[$resourceName]["accept"], true)) {
-            Session::addMessageAfterRedirect(sprintf("❌ " . __("Uploaded file %s is invalid (only %s accepted)", "mod"), $file["name"], implode(", ", $imageResources[$resourceName]["accept"])));
-            return false;
-        }
-
-        $realMime = Toolbox::getMime($file["tmp_name"]);
-        $expectedMimes = self::MIME_MAP[$extension] ?? null;
-        if ($expectedMimes === null || !in_array($realMime, $expectedMimes, true)) {
-            Session::addMessageAfterRedirect(sprintf("❌ " . __("Uploaded file %s is invalid (only %s accepted)", "mod"), $file["name"], implode(", ", $imageResources[$resourceName]["accept"])));
-            return false;
-        }
-
-        if (!move_uploaded_file($file["tmp_name"], $imageResources[$resourceName]["current"])) {
-            Session::addMessageAfterRedirect(sprintf("❌ " . __("Upload of file %s failed", "mod"), $file["name"]));
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Updates the title by saving it to a designated resource file.
-     *
-     * This method writes the provided title to a file after applying the necessary escape functions
-     * to ensure the content is safe for storage.
-     *
-     * @param string $title The new title to save.
-     *
-     * @return void This method does not return a value.
-     */
-    public function changeTitle(string $title): void
-    {
-        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
-            return;
-        }
-        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
-        if ($ini === false) {
-            /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
-            $ini = ["title" => "GLPI", "login" => "false"];
-        }
-        $ini["title"] = strip_tags(trim($title));
-        $iniString = [];
-        foreach ($ini as $key => $value) {
-            $safeValue = str_replace(['"', "\n", "\r"], ['\\"', '', ''], (string)$value);
-            $iniString[] = "$key=\"$safeValue\"";
-        }
-        file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
-    }
-
-    /**
-     * Retrieves the current title.
-     *
-     * This method fetches the title from the designated resource file. If the file
-     * is not accessible or its content is unavailable, a default value is returned.
-     *
-     * @return string Returns the current title of the resource, or a default value if unavailable.
-     */
-    public static function getCurrentTitle(): string
-    {
-        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
-            return "GLPI";
-        }
-        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
-        if ($ini === false) return "GLPI";   // ← safe fallback
-        if (!isset($ini["title"])) {
-            self::initModifiers();
-            return "GLPI";
-        }
-        return (string)$ini["title"];
-    }
-
-    /**
-     * Checks if the login page has been modified by verifying the relevant configuration in the modifiers.ini file.
-     *
-     * @return bool Returns true if the login page is flagged as modified, or false otherwise.
-     */
-    public static function isLoginPageModified(): bool
-    {
-        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
-            return false;
-        }
-        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
-        if ($ini === false) return false;
-        if (!isset($ini["login"])) {
-            self::initModifiers();
-            return false;
-        }
-        return $ini["login"] === "1";
-    }
-
-    /**
-     * Returns whether theme-specific logo modification is enabled.
-     *
-     * @return bool
-     */
-    public static function isThemeLogosEnabled(): bool
-    {
-        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
-            return false;
-        }
-        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
-        if ($ini === false) {
-            return false;
-        }
-        if (!isset($ini["theme_logos"])) {
-            self::initModifiers();
-            return false;
-        }
-        return $ini["theme_logos"] === "1";
-    }
-
-    /**
-     * Enables/disables theme-specific logo modification.
-     *
-     * @param bool $enabled
-     * @return void
-     */
-    public function setThemeLogosEnabled(bool $enabled): void
-    {
-        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
-            return;
-        }
-        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
-        if ($ini === false) {
-            /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
-            $ini = ["title" => "GLPI", "login" => "0", "theme_logos" => "0"];
-        }
-        $ini["theme_logos"] = $enabled ? "1" : "0";
-        $iniString = [];
-        foreach ($ini as $key => $value) {
-            $iniString[] = "$key=$value";
-        }
-        file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
-    }
-
-    /**
-     * Checks whether any logo resource is currently in a modified state.
-     *
-     * This is useful to support theme-specific logo resources in addition to the
-     * generic logo paths.
-     *
-     * @return bool Returns true if any logo resource is modified; otherwise false.
-     */
     public static function isAnyLogoModified(): bool
     {
-        $resources = [
-            "logo_s",
-            "logo_m",
-            "logo_l",
-            "logo_s_black",
-            "logo_s_grey",
-            "logo_s_white",
-            "logo_m_black",
-            "logo_m_grey",
-            "logo_m_white",
-            "logo_l_black",
-            "logo_l_grey",
-            "logo_l_white",
-        ];
-        foreach ($resources as $resource) {
+        foreach ([
+            'logo_s', 'logo_m', 'logo_l',
+            'logo_s_black', 'logo_s_grey', 'logo_s_white',
+            'logo_m_black', 'logo_m_grey', 'logo_m_white',
+            'logo_l_black', 'logo_l_grey', 'logo_l_white',
+        ] as $resource) {
             if (self::isActiveResourceModified($resource)) {
                 return true;
             }
         }
+
         return false;
     }
 
+    public function restoreResource(string $resourceName): void
+    {
+        $resources = self::getImageResources();
+        if (!isset($resources[$resourceName]['active'])) {
+            return;
+        }
+
+        $active = $resources[$resourceName]['active'];
+        $backup = $resources[$resourceName]['backup'] ?? null;
+
+        if (is_array($active)) {
+            foreach ($active as $index => $activeFile) {
+                if (is_array($backup) && isset($backup[$index]) && is_file($backup[$index])) {
+                    self::copyChecked($backup[$index], $activeFile, $resourceName . ' restore');
+                }
+            }
+            return;
+        }
+
+        if (is_string($backup) && is_file($backup)) {
+            self::copyChecked($backup, $active, $resourceName . ' restore');
+            return;
+        }
+
+        self::removeChecked($active);
+    }
+
+    public function applyResource(string $resourceName): void
+    {
+        $resources = self::getImageResources();
+        if (!isset($resources[$resourceName]['active'])) {
+            return;
+        }
+
+        $resource = $resources[$resourceName];
+
+        if (!is_file($resource['current']) && is_file($resource['default'])) {
+            self::copyChecked($resource['default'], $resource['current'], $resourceName . ' default');
+        }
+
+        if (!is_file($resource['current'])) {
+            throw new \RuntimeException(sprintf('Current resource is missing: %s', $resourceName));
+        }
+
+        $active = $resource['active'];
+        if (is_array($active)) {
+            foreach ($active as $index => $activeFile) {
+                self::copyChecked($resource['current'], $activeFile, $resourceName . ' apply ' . $index);
+            }
+        } else {
+            self::copyChecked($resource['current'], $active, $resourceName . ' apply');
+        }
+    }
+
+    public function uploadResource(string $resourceName, UploadedFile|array $file): bool
+    {
+        $resources = self::getImageResources();
+        if (!isset($resources[$resourceName])) {
+            return false;
+        }
+
+        if ($file instanceof UploadedFile) {
+            if (!$file->isValid()) {
+                Session::addMessageAfterRedirect(__('Upload failed.', 'mod'));
+                return false;
+            }
+
+            $tmpName = $file->getPathname();
+            $originalName = $file->getClientOriginalName();
+            $size = (int) $file->getSize();
+        } else {
+            if (!isset($file['tmp_name']) || !is_string($file['tmp_name'])) {
+                return false;
+            }
+            if (!is_uploaded_file($file['tmp_name'])) {
+                Session::addMessageAfterRedirect(__('Invalid uploaded file.', 'mod'));
+                return false;
+            }
+
+            if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+                Session::addMessageAfterRedirect(__('Upload failed.', 'mod'));
+                return false;
+            }
+
+            $tmpName = $file['tmp_name'];
+            $originalName = (string) ($file['name'] ?? '');
+            $size = (int) ($file['size'] ?? 0);
+        }
+
+        $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        if (!in_array($extension, $resources[$resourceName]['accept'], true)) {
+            Session::addMessageAfterRedirect(
+                sprintf(__('Invalid file type. Allowed: %s', 'mod'), implode(', ', $resources[$resourceName]['accept']))
+            );
+            return false;
+        }
+
+        $maxSize = $resourceName === 'background' ? 15 * 1024 * 1024 : 2 * 1024 * 1024;
+        if ($size <= 0 || $size > $maxSize) {
+            Session::addMessageAfterRedirect(__('The uploaded file is too large or empty.', 'mod'));
+            return false;
+        }
+
+        $mime = Toolbox::getMime($tmpName);
+        $expected = self::MIME_MAP[$extension] ?? [];
+        if (!in_array($mime, $expected, true)) {
+            Session::addMessageAfterRedirect(__('The uploaded file content does not match its extension.', 'mod'));
+            return false;
+        }
+
+        $destination = $resources[$resourceName]['current'];
+        self::ensureDir(dirname($destination));
+
+        if ($file instanceof UploadedFile) {
+            try {
+                $file->move(dirname($destination), basename($destination));
+            } catch (\Throwable) {
+                Session::addMessageAfterRedirect(__('Unable to store uploaded file.', 'mod'));
+                return false;
+            }
+        } elseif (!move_uploaded_file($tmpName, $destination)) {
+            Session::addMessageAfterRedirect(__('Unable to store uploaded file.', 'mod'));
+            return false;
+        }
+
+        return true;
+    }
+
+    public function changeTitle(string $title): void
+    {
+        $values = self::readModifiers();
+        $values['title'] = $title;
+        self::writeModifiers($values);
+    }
+
     /**
-     * Applies modifications to the login page by updating the modifiers.ini file.
-     * If the file does not exist or cannot be parsed, it initializes the configuration
-     * with default values and flags the login page as modified.
-     *
-     * @return void
+     * Read the configured title without creating or modifying plugin files.
      */
+    public static function getConfiguredTitle(): string
+    {
+        return self::readModifiers()['title'];
+    }
+
+    /**
+     * Read login modifier state without creating or modifying plugin files.
+     */
+    public static function isLoginPageModifierEnabled(): bool
+    {
+        return self::readModifiers()['login'] === '1';
+    }
+
+    public static function getCurrentTitle(): string
+    {
+        if (!is_file(self::FILES_DIR . '/modifiers.ini') && !self::initModifiers()) {
+            return 'GLPI';
+        }
+
+        return self::readModifiers()['title'];
+    }
+
+    public static function isLoginPageModified(): bool
+    {
+        if (!is_file(self::FILES_DIR . '/modifiers.ini') && !self::initModifiers()) {
+            return false;
+        }
+
+        return self::readModifiers()['login'] === '1';
+    }
+
+    public static function isThemeLogosEnabled(): bool
+    {
+        if (!is_file(self::FILES_DIR . '/modifiers.ini') && !self::initModifiers()) {
+            return false;
+        }
+
+        return self::readModifiers()['theme_logos'] === '1';
+    }
+
+    public function setThemeLogosEnabled(bool $enabled): void
+    {
+        $values = self::readModifiers();
+        $values['theme_logos'] = $enabled ? '1' : '0';
+        self::writeModifiers($values);
+    }
+
     public function applyLoginPageModifier(): void
     {
-        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
-            return;
-        }
-        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
-        if ($ini === false) {
-            /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
-            $ini = ["title" => "GLPI", "login" => "1"];
-        }
-        $ini["login"] = "1";
-        $iniString = [];
-        foreach ($ini as $key => $value) {
-            $safeValue = str_replace(['"', "\n", "\r"], ['\\"', '', ''], (string)$value);
-            $iniString[] = "$key=\"$safeValue\"";
-        }
-        file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
+        $values = self::readModifiers();
+        $values['login'] = '1';
+        self::writeModifiers($values);
     }
 
-    /**
-     * Disables the login page modification by updating the related configuration in the modifiers.ini file.
-     *
-     * @return void
-     */
     public function disableLoginPageModifier(): void
     {
-        if (!file_exists(self::FILES_DIR . "/modifiers.ini") && !self::initModifiers()) {
-            return;
-        }
-        $ini = parse_ini_file(self::FILES_DIR . "/modifiers.ini");
-        if ($ini === false) {
-            /** @noinspection PhpArrayIndexImmediatelyRewrittenInspection */
-            $ini = ["title" => "GLPI", "login" => "0"];
-        }
-        $ini["login"] = "0";
-        $iniString = [];
-        foreach ($ini as $key => $value) {
-            $safeValue = str_replace(['"', "\n", "\r"], ['\\"', '', ''], (string)$value);
-            $iniString[] = "$key=\"$safeValue\"";
-        }
-        file_put_contents(self::FILES_DIR . "/modifiers.ini", implode("\n", $iniString));
+        $values = self::readModifiers();
+        $values['login'] = '0';
+        self::writeModifiers($values);
     }
-
 }

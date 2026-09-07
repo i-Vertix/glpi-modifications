@@ -1,153 +1,140 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Italian (Italy) translations for UI Branding.
+# Copyright (C) 2026 ORGANIZATION
+# This file is distributed under the same license as the UI Branding project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-16 10:01+0100\n"
-"PO-Revision-Date: 2026-03-16 10:09+0100\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"Project-Id-Version: UI Branding 12.0.11\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2026-09-07 01:53+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it_IT\n"
+"Language-Team: it_IT <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: M365 Copilot\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "UI Branding"
 msgstr "UI Branding"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Apply Modifications"
 msgstr "Applica le modifiche"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Page Title"
 msgstr "Titolo della pagina"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Show login background"
 msgstr "Mostra lo sfondo della schermata di accesso"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Show custom logos"
 msgstr "Mostra loghi personalizzati"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Enable theme-based logo modifications"
-msgstr "Abilita modifiche ai loghi basate sul theme"
+msgstr "Abilita modifiche ai loghi basate sul tema"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Show custom favicon"
 msgstr "Mostra la favicon personalizzata"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Custom Images"
 msgstr "Immagini personalizzate"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Background"
 msgstr "Sfondo"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
+msgid "Standard logos"
+msgstr "Loghi standard"
+
+#: templates/uibranding.html.twig:1
 msgid "Small Logo"
 msgstr "Logo piccolo"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Medium Logo"
 msgstr "Logo medio"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Large Logo"
 msgstr "Logo grande"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Theme-based logos"
 msgstr "Loghi basati sul tema"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Small Logo (black)"
 msgstr "Logo piccolo (nero)"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Small Logo (grey)"
 msgstr "Logo piccolo (grigio)"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Small Logo (white)"
 msgstr "Logo piccolo (bianco)"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Medium Logo (black)"
 msgstr "Logo medio (nero)"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Medium Logo (grey)"
 msgstr "Logo medio (grigio)"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Medium Logo (white)"
 msgstr "Logo medio (bianco)"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Large Logo (black)"
 msgstr "Logo grande (nero)"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Large Logo (grey)"
 msgstr "Logo grande (grigio)"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Large Logo (white)"
 msgstr "Logo grande (bianco)"
 
-#: templates/uibranding.html.twig
+#: templates/uibranding.html.twig:1
 msgid "Favicon"
 msgstr "Favicon"
 
-#: front/uibranding.php:49
+#: templates/uibranding.html.twig:1
+msgid "Click to download"
+msgstr "Clicca per scaricare"
+
+#: templates/uibranding.html.twig:1
 msgid "Please activate the plugin"
 msgstr "Attiva il plugin"
 
-#: src/BrandManager.php:254
-msgid "Created plugin directories"
-msgstr "Directory del plugin create"
+#: templates/uibranding.html.twig:1
+msgid "Clear cache"
+msgstr "Svuota cache"
 
-#: src/BrandManager.php:286
-msgid "Installed image resources"
-msgstr "Risorse immagine installate"
+#: templates/uibranding.html.twig:1
+msgid "GLPI cache cleared successfully."
+msgstr "La cache di GLPI è stata svuotata correttamente."
 
-#: src/BrandManager.php:287
-msgid "Created backups"
-msgstr "Backup creati"
+#: templates/uibranding.html.twig:1
+msgid "Unable to clear the GLPI cache completely."
+msgstr "Non è stato possibile svuotare completamente la cache di GLPI."
 
-#: src/BrandManager.php:293
-msgid "Installed modifiers"
-msgstr "Modifiche installate"
-
-#: src/BrandManager.php:306
-msgid "Restored backups"
-msgstr "Backup ripristinati"
-
-#: src/BrandManager.php:309
-msgid "Removed resources and backups"
-msgstr "Risorse e backup rimossi"
-
-#: src/BrandManager.php:455
-#, php-format
-msgid "Upload of file %s failed (file invalid)"
-msgstr "Caricamento del file %s non riuscito (file non valido)"
-
-#: src/BrandManager.php:461 src/BrandManager.php:468
-#, php-format
-msgid "Uploaded file %s is invalid (only %s accepted)"
-msgstr "Il file caricato %s non è valido (è accettato solo %s)"
-
-#: src/BrandManager.php:473
-#, php-format
-msgid "Upload of file %s failed"
-msgstr "Caricamento del file %s non riuscito"
+#: src/Controller/UIBrandingController.php:50
+msgid "UI Branding settings saved successfully. It is recommended to clear the GLPI cache to apply all changes."
+msgstr "Le impostazioni di UI Branding sono state salvate correttamente. Si consiglia di svuotare la cache di GLPI per applicare tutte le modifiche."
