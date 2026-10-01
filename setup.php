@@ -11,7 +11,7 @@ use Glpi\Plugin\Hooks;
 use GlpiPlugin\Mod\BrandingHooks;
 use GlpiPlugin\Mod\BrandManager;
 
-const PLUGIN_MOD_VERSION = '12.0.36';
+const PLUGIN_MOD_VERSION = '12.0.44';
 const PLUGIN_MOD_MIN_GLPI_VERSION = '12.0.0';
 const PLUGIN_MOD_MAX_GLPI_VERSION = '13.0.0';
 
@@ -46,7 +46,7 @@ function plugin_version_mod(): array
     return [
         'name'         => 'UI Branding',
         'version'      => PLUGIN_MOD_VERSION,
-        'author'       => 'i-Vertix',
+        'author'       => '<a href="https://www.i-vertix.com/">i-Vertix</a>',
         'license'      => 'GPLv3',
         'homepage'     => 'https://github.com/i-Vertix/glpi-modifications',
         'requirements' => [

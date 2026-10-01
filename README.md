@@ -1,4 +1,4 @@
-# UI Branding 12.0.36
+# UI Branding 12.0.44
 
 Visual customization plugin for GLPI 12.
 
@@ -14,9 +14,9 @@ Visual customization plugin for GLPI 12.
 
 ## Architecture
 
-Version 12.0.36 applies branding **at runtime through hooks and Controllers**, without replacing files in GLPI `public/pics`.
+Version 12.0.44 applies branding **at runtime through hooks and Controllers**, using targeted GLPI 12 logo selectors without replacing files in GLPI `public/pics`.
 
-Custom resources for this generation are stored under `GLPI_PLUGIN_DOC_DIR/mod/v12/images` and served through plugin routes. Bundled resources are resolved from the installed plugin directory using GLPI's plugin path API. Logos and login branding are applied by runtime CSS/JavaScript loaded through GLPI plugin asset hooks. The favicon is updated by the same runtime asset script.
+Administrator-uploaded resources are stored under `GLPI_PLUGIN_DOC_DIR/mod/uploads` and served through plugin routes. Bundled default resources remain inside the installed plugin under `resources/images` and are resolved using GLPI's plugin path API; they are never copied into persistent plugin data. Logos and login branding are applied by runtime CSS/JavaScript loaded through GLPI plugin asset hooks. The favicon is updated by the same runtime asset script.
 
 There are no `front/` or `ajax/` entry points, and the plugin does not include `composer.json`, `composer.lock`, or its own `vendor/` directory.
 

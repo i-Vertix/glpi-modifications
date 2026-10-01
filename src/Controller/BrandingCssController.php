@@ -28,24 +28,29 @@ final class BrandingCssController extends AbstractController
         $assetBase = $basePath . '/Asset/';
 
         $assetUrl = static function (string $name) use ($assetBase): string {
-            return $assetBase . rawurlencode($name) . '?v=' . rawurlencode(BrandManager::getResourceVersion($name));
+            return $assetBase . rawurlencode($name) . '?v='
+                . rawurlencode(BrandManager::getResourceFingerprint($name));
         };
 
         $rules = [];
 
         if ($config['show_logos'] === '1') {
             if ($config['theme_logos'] === '1') {
-                $lightMedium = $assetUrl('logo_m_black');
-                $darkMedium = $assetUrl('logo_m_white');
-                $lightSmall = $assetUrl('logo_s_black');
-                $darkSmall = $assetUrl('logo_s_white');
-                $lightLarge = $assetUrl('logo_l_black');
-                $darkLarge = $assetUrl('logo_l_white');
+                $lightMedium = $assetUrl('logo_m_white');
+                $darkMedium = $assetUrl('logo_m_black');
+                $lightSmall = $assetUrl('logo_s_white');
+                $darkSmall = $assetUrl('logo_s_black');
+                $lightLarge = $assetUrl('logo_l_white');
+                $darkLarge = $assetUrl('logo_l_black');
 
+                // The plugin stylesheet is injected before GLPI core CSS, so use
+                // !important on the runtime branding rules. This keeps the custom
+                // assets effective without changing GLPI core files, while still
+                // respecting the native collapsed sidebar state.
                 $rules[] = '.page .glpi-logo{background-image:url("' . $lightMedium . '") !important;background-repeat:no-repeat !important;background-size:contain !important;}';
                 $rules[] = '[data-glpi-theme-dark="1"] .page .glpi-logo{background-image:url("' . $darkMedium . '") !important;}';
-                $rules[] = '.navbar-vertical .glpi-logo,.global-menu .glpi-logo{background-image:url("' . $lightSmall . '") !important;background-repeat:no-repeat !important;background-size:contain !important;}';
-                $rules[] = '[data-glpi-theme-dark="1"] .navbar-vertical .glpi-logo,[data-glpi-theme-dark="1"] .global-menu .glpi-logo{background-image:url("' . $darkSmall . '") !important;}';
+                $rules[] = 'body.navbar-collapsed .navbar-vertical .glpi-logo,body.navbar-collapsed .global-menu .glpi-logo{background-image:url("' . $lightSmall . '") !important;background-repeat:no-repeat !important;background-size:contain !important;}';
+                $rules[] = '[data-glpi-theme-dark="1"] body.navbar-collapsed .navbar-vertical .glpi-logo,[data-glpi-theme-dark="1"] body.navbar-collapsed .global-menu .glpi-logo{background-image:url("' . $darkSmall . '") !important;}';
                 $rules[] = '.page-anonymous .glpi-logo{content:url("' . $lightLarge . '") !important;}';
                 $rules[] = '[data-glpi-theme-dark="1"] .page-anonymous .glpi-logo{content:url("' . $darkLarge . '") !important;}';
             } else {
@@ -54,7 +59,7 @@ final class BrandingCssController extends AbstractController
                 $large = $assetUrl('logo_l');
 
                 $rules[] = '.page .glpi-logo{background-image:url("' . $medium . '") !important;background-repeat:no-repeat !important;background-size:contain !important;}';
-                $rules[] = '.navbar-vertical .glpi-logo,.global-menu .glpi-logo{background-image:url("' . $small . '") !important;background-repeat:no-repeat !important;background-size:contain !important;}';
+                $rules[] = 'body.navbar-collapsed .navbar-vertical .glpi-logo,body.navbar-collapsed .global-menu .glpi-logo{background-image:url("' . $small . '") !important;background-repeat:no-repeat !important;background-size:contain !important;}';
                 $rules[] = '.page-anonymous .glpi-logo{content:url("' . $large . '") !important;}';
             }
         }
@@ -67,11 +72,14 @@ final class BrandingCssController extends AbstractController
         }
 
         $content = implode("\n", $rules) . "\n";
+        $etag = '"' . hash('sha256', $content) . '"';
         $response = new Response($content, Response::HTTP_OK, [
             'Content-Type' => 'text/css; charset=UTF-8',
-            'Cache-Control' => 'no-cache, must-revalidate',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+            'ETag' => $etag,
         ]);
 
         return $response;
     }
+
 }

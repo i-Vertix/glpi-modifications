@@ -1,3 +1,54 @@
+## 12.0.44 - 2026-10-01
+
+### Fixed
+
+- Separated bundled default branding resources from administrator uploads.
+- Store only administrator-uploaded resources under `GLPI_PLUGIN_DOC_DIR/mod/uploads`.
+- Resolve bundled defaults directly from the installed plugin `resources/images` directory instead of copying them into persistent data during installation.
+- This keeps plugin defaults updateable while preserving administrator customizations independently.
+
+## 12.0.44 - 2026-10-01
+
+### Fixed
+
+- Centralized plugin web URL generation using GLPI's canonical `/plugins/mod` path, independent of the physical installation location (`plugins` or `marketplace`).
+- Removed duplicated `/plugins` versus `/marketplace` detection from controllers and branding hooks.
+- Kept physical plugin filesystem resolution unchanged via GLPI's `Plugin::getPhpDir()` mechanism.
+
+## [12.0.42] — 2026-10-01
+
+### Performance
+- Added preload hints for the branding logos used by the current GLPI interface state.
+- Preloads only the active theme logo variants and avoids loading unnecessary logo sizes on each page.
+- Preserved the existing runtime logo overrides and immutable asset caching without modifying GLPI core files.
+
+## [12.0.41] — 2026-10-01
+
+### Fixed
+- Restored runtime logo overrides so custom Small, Medium and Large logos are applied again on GLPI 12.
+- Kept content-based stylesheet caching from 12.0.40 while using the selectors proven to work with GLPI's stylesheet order.
+- Preserved the collapsed-sidebar behavior: Small logo only when the vertical menu is collapsed.
+
+## [12.0.40] — 2026-10-01
+
+### Changed
+- Reworked runtime logo branding to override GLPI 12's native `--glpi-logo*` CSS variables instead of replacing `.glpi-logo` background rules.
+- Small, Medium and Large logo selection now follows GLPI's native reduced-logo mechanism for the collapsed sidebar and login page.
+- Added content-based versioning to the generated branding stylesheet and long-lived immutable browser caching to avoid visible branding reloads during normal navigation.
+- Branding asset URLs now use SHA-256 fingerprints so cached images are replaced only when their contents change.
+
+## [12.0.39] — 2026-10-01
+
+### Fixed
+- Removed the obsolete `Please activate the plugin` translation entry from all language catalogs.
+- Updated the configuration page CSS comment to reflect the current GLPI 12 `page_skeleton` layout.
+
+## [12.0.38] — 2026-10-01
+
+### Fixed
+- Fixed the vertical sidebar logo selection so the Small logo is used only when the left menu is collapsed; the Medium logo is used when the menu is expanded.
+- Preserved the existing theme-based logo behavior for light and dark themes.
+
 ## [12.0.36] — 2026-09-16
 
 ### Added

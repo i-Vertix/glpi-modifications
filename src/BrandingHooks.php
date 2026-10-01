@@ -3,6 +3,7 @@
 namespace GlpiPlugin\Mod;
 
 use Glpi\Plugin\Hooks;
+use Glpi\UI\ThemeManager;
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -15,26 +16,34 @@ final class BrandingHooks
         global $PLUGIN_HOOKS, $CFG_GLPI;
 
         // The branding stylesheet is served dynamically by a public Controller.
-        // This avoids the hard-coded /plugins/<key>/ static-asset path used by
-        // GLPI's generic ADD_CSS extension when the plugin is installed through
-        // the Marketplace directory. The stylesheet is loaded before core CSS,
-        // so its branding declarations use !important and remain deterministic.
-        $cssUrl = self::getPluginWebPrefix() . '/UIBranding/BrandingCss';
+        // The URL is content-versioned so browsers can keep the stylesheet in
+        // cache across normal GLPI navigation and fetch it again only when the
+        // branding configuration, resources, or plugin version changes.
+        $cssUrl = Paths::getBrandingCssUrl(BrandManager::getBrandingCssFingerprint());
 
-        $headerTags = [
-            [
-                'tag' => 'link',
-                'properties' => [
-                    'rel'  => 'stylesheet',
-                    'type' => 'text/css',
-                    'href' => $cssUrl,
-                ],
+        $headerTags = [];
+
+        // Preload only the logo assets that can be used by the current page.
+        // Place these hints before the stylesheet so the browser can start
+        // fetching the image as early as possible.
+        if (BrandManager::isAnyLogoModified()) {
+            $headerTags = self::getLogoPreloadTags();
+        }
+
+        $headerTags[] = [
+            'tag' => 'link',
+            'properties' => [
+                'rel'  => 'stylesheet',
+                'type' => 'text/css',
+                'href' => $cssUrl,
             ],
         ];
 
         if (BrandManager::isFaviconEnabled()) {
-            $faviconUrl = self::getPluginWebPrefix() . '/UIBranding/Asset/favicon?v='
-                . rawurlencode(BrandManager::getResourceFingerprint('favicon'));
+            $faviconUrl = Paths::getAssetUrl(
+                'favicon',
+                BrandManager::getResourceFingerprint('favicon'),
+            );
             $headerTags[] = [
                 'tag' => 'link',
                 'properties' => [
@@ -65,10 +74,62 @@ final class BrandingHooks
         }
     }
 
-    private static function getPluginWebPrefix(): string
+
+    /**
+     * Preload only the branding logos relevant to the current interface state.
+     *
+     * @return array<int, array{tag: string, properties: array<string, string>}>
+     */
+    private static function getLogoPreloadTags(): array
     {
-        $pluginPath = str_replace('\\', '/', \Plugin::getPhpDir('mod'));
-        return str_contains($pluginPath, '/marketplace/') ? '/marketplace/mod' : '/plugins/mod';
+        $themeLogos = BrandManager::isThemeLogosEnabled();
+        $isAnonymous = !isset($_SESSION['glpiactiveprofile']);
+        $themeIsDark = false;
+
+        if ($themeLogos) {
+            $themeIsDark = ThemeManager::getInstance()->getCurrentTheme()->isDarkTheme();
+        }
+
+        if ($isAnonymous) {
+            $resourceName = $themeLogos
+                ? ($themeIsDark ? 'logo_l_black' : 'logo_l_white')
+                : 'logo_l';
+
+            return [self::createPreloadTag($resourceName)];
+        }
+
+        $medium = $themeLogos
+            ? ($themeIsDark ? 'logo_m_black' : 'logo_m_white')
+            : 'logo_m';
+        $small = $themeLogos
+            ? ($themeIsDark ? 'logo_s_black' : 'logo_s_white')
+            : 'logo_s';
+
+        return [
+            self::createPreloadTag($medium),
+            self::createPreloadTag($small),
+        ];
     }
+
+    /**
+     * @return array{tag: string, properties: array<string, string>}
+     */
+    private static function createPreloadTag(string $resourceName): array
+    {
+        $url = Paths::getAssetUrl(
+            $resourceName,
+            BrandManager::getResourceFingerprint($resourceName),
+        );
+
+        return [
+            'tag' => 'link',
+            'properties' => [
+                'rel'  => 'preload',
+                'as'   => 'image',
+                'href' => $url,
+            ],
+        ];
+    }
+
 
 }

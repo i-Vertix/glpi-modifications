@@ -18,8 +18,8 @@ if (!defined('GLPI_ROOT')) {
 
 final class BrandManager
 {
-    public const FILES_DIR = GLPI_PLUGIN_DOC_DIR . '/mod/v12';
-    public const IMAGES_DIR = self::FILES_DIR . '/images';
+    public const FILES_DIR = GLPI_PLUGIN_DOC_DIR . '/mod';
+    public const UPLOADS_DIR = self::FILES_DIR . '/uploads';
     private const CONFIG_FILE = self::FILES_DIR . '/settings.ini';
 
     private const DEFAULT_CONFIG = [
@@ -169,7 +169,7 @@ final class BrandManager
         foreach (self::RESOURCE_DEFINITIONS as $name => $definition) {
             $resources[$name] = [
                 'default' => self::getResourceDir() . '/' . $definition['default'],
-                'current' => self::IMAGES_DIR . '/' . $definition['filename'],
+                'current' => self::UPLOADS_DIR . '/' . $definition['filename'],
                 'accept'  => $definition['extensions'],
             ];
         }
@@ -225,6 +225,50 @@ final class BrandManager
         return is_string($hash) ? $hash : self::getResourceVersion($resourceName);
     }
 
+    /**
+     * Return a stable fingerprint for the generated branding stylesheet.
+     *
+     * The fingerprint changes only when the plugin version, CSS-affecting
+     * configuration, or resources referenced by the stylesheet change.
+     */
+    public static function getBrandingCssFingerprint(): string
+    {
+        $config = self::readConfigFile();
+
+        $payload = [
+            'plugin' => defined('PLUGIN_MOD_VERSION') ? PLUGIN_MOD_VERSION : '0',
+            'login' => $config['login'],
+            'show_logos' => $config['show_logos'],
+            'theme_logos' => $config['theme_logos'],
+            'resources' => [],
+        ];
+
+        if ($config['show_logos'] === '1') {
+            $resourceNames = $config['theme_logos'] === '1'
+                ? [
+                    'logo_s_black', 'logo_s_white',
+                    'logo_m_black', 'logo_m_white',
+                    'logo_l_black', 'logo_l_white',
+                ]
+                : ['logo_s', 'logo_m', 'logo_l'];
+
+            foreach ($resourceNames as $resourceName) {
+                $payload['resources'][$resourceName] = self::getResourceFingerprint($resourceName);
+            }
+        }
+
+        if ($config['login'] === '1') {
+            $payload['resources']['background'] = self::getResourceFingerprint('background');
+        }
+
+        $encoded = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        if (!is_string($encoded)) {
+            return '0';
+        }
+
+        return substr(hash('sha256', $encoded), 0, 16);
+    }
+
     private static function ensureDir(string $dir): void
     {
         if (is_dir($dir)) {
@@ -233,19 +277,6 @@ final class BrandManager
 
         if (!mkdir($dir, 0755, true) && !is_dir($dir)) {
             throw new \RuntimeException(sprintf('Unable to create directory: %s', $dir));
-        }
-    }
-
-    private static function copyFile(string $source, string $destination): void
-    {
-        if (!is_file($source) || !is_readable($source)) {
-            throw new \RuntimeException(sprintf('Source file is not readable: %s', basename($source)));
-        }
-
-        self::ensureDir(dirname($destination));
-
-        if (!copy($source, $destination)) {
-            throw new \RuntimeException(sprintf('Unable to copy resource: %s', basename($source)));
         }
     }
 
@@ -350,13 +381,7 @@ final class BrandManager
     public function install(): void
     {
         self::ensureDir(self::FILES_DIR);
-        self::ensureDir(self::IMAGES_DIR);
-
-        foreach (self::getImageResources() as $resource) {
-            if (!is_file($resource['current']) && is_file($resource['default'])) {
-                self::copyFile($resource['default'], $resource['current']);
-            }
-        }
+        self::ensureDir(self::UPLOADS_DIR);
 
         if (!is_file(self::CONFIG_FILE)) {
             $values = self::DEFAULT_CONFIG;
@@ -437,7 +462,7 @@ final class BrandManager
             }
         }
 
-        $destination = self::IMAGES_DIR . '/' . $definition['filename'];
+        $destination = self::UPLOADS_DIR . '/' . $definition['filename'];
         self::ensureDir(dirname($destination));
 
         $file->move(dirname($destination), basename($destination));

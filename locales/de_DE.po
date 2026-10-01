@@ -116,11 +116,6 @@ msgid "Favicon"
 msgstr "Favicon"
 
 #: templates/uibranding.html.twig:1
-#: templates/uibranding.html.twig:1
-msgid "Please activate the plugin"
-msgstr "Bitte aktivieren Sie das Plugin"
-
-#: templates/uibranding.html.twig:1
 msgid "Clear cache"
 msgstr "Cache leeren"
 

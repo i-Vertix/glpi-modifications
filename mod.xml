@@ -3,7 +3,7 @@
     <id>mod</id>
     <name>UI Branding</name>
     <key>mod</key>
-    <version>12.0.36</version>
+    <version>12.0.44</version>
     <author>i-Vertix</author>
     <homepage>https://github.com/i-Vertix/glpi-modifications</homepage>
     <license>GPLv3</license>
@@ -13,7 +13,7 @@
     </requirements>
     <versions>
         <version>
-            <num>12.0.36</num>
+            <num>12.0.44</num>
             <compatibility>~12.0.0</compatibility>
             <download_url>https://github.com/i-Vertix/glpi-modifications/releases</download_url>
         </version>

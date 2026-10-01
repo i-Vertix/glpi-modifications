@@ -191,9 +191,8 @@
 </div>
 
 <style>
-    /* GLPI 12 page_without_tabs renders `container container-fluid`.
-     * The generic `.container` rule can keep a breakpoint max-width, so
-     * remove that limit on this configuration page only. */
+    /* GLPI may wrap plugin content in a breakpoint-constrained `.container`.
+     * Keep this configuration page at the full available width. */
     .page-body > .container.container-fluid {
         width: 100%;
         max-width: none;

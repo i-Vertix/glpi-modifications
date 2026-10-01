@@ -4,6 +4,7 @@ namespace GlpiPlugin\Mod\Controller;
 
 use Glpi\Cache\CacheManager;
 use Glpi\Controller\AbstractController;
+use GlpiPlugin\Mod\Paths;
 use GlpiPlugin\Mod\UIBranding;
 use Session;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -22,7 +23,7 @@ final class UIBrandingController extends AbstractController
             throw new AccessDeniedHttpException();
         }
 
-        $baseUrl = $this->getBaseUrl();
+        $baseUrl = Paths::getWebPrefix();
 
         if ($request->isMethod('POST')) {
             if ($request->request->has('clear_cache')) {
@@ -73,15 +74,5 @@ final class UIBrandingController extends AbstractController
             ));
     }
 
-    private function getBaseUrl(): string
-    {
-        global $CFG_GLPI;
-
-        $rootDoc = rtrim((string) ($CFG_GLPI['root_doc'] ?? ''), '/');
-        $pluginPath = str_replace('\\', '/', \Plugin::getPhpDir('mod'));
-        $webPrefix = str_contains($pluginPath, '/marketplace/') ? '/marketplace/mod' : '/plugins/mod';
-
-        return $rootDoc . $webPrefix;
-    }
 
 }
